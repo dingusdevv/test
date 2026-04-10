@@ -1,21 +1,27 @@
-local plrs = game:FindFirstChildOfClass("Players")
-local lp = plrs.LocalPlayer
-local ws = game:FindFirstChildOfClass("Workspace")
-local uis = game:FindFirstChildOfClass("UserInputService")
-local rs = game:FindFirstChildOfClass("RunService")
-local heartbeat = rs.Heartbeat
-local renderstepped = rs.RenderStepped
+local plrs=game:FindFirstChildOfClass("Players")
+local lp=plrs.LocalPlayer
+local ws=game:FindFirstChildOfClass("Workspace")
+local uis=game:FindFirstChildOfClass("UserInputService")
+local rs=game:FindFirstChildOfClass("RunService")
+local heartbeat=rs.Heartbeat
+local renderstepped=rs.RenderStepped
 
-local cf = CFrame.new
-local v3 = Vector3.new
-local angles = CFrame.Angles
+local angles=CFrame.Angles
+local cf=CFrame.new
+local v3=Vector3.new
+local v3_010=v3(0,1,0)
+local v3_0=v3(0,0,0)
+local osclock=os.clock
+local twait=task.wait
 
-local off = angles(-1.5707963267948966, 0, 0)
+local speeding=32
+local maxspeed=75
+local off=angles(-1.5707963267948966,0,0)
 
-local function gp(p, n, cl)
-	if typeof(p) == "Instance" then
-		for _, v in ipairs(p:GetChildren()) do
-			if v.Name == n and v:IsA(cl) then
+local function gp(p,n,cl)
+	if typeof(p)=="Instance" then
+		for _,v in ipairs(p:GetChildren()) do
+			if v.Name==n and v:IsA(cl) then
 				return v
 			end
 		end
@@ -23,135 +29,159 @@ local function gp(p, n, cl)
 	return nil
 end
 
-local function make(class)
-	return Instance.new(class)
-end
+local i=Instance.new
+local v2=Vector2.new
+local bc=BrickColor.new
+local c3=Color3.new
+local u2=UDim2.new
 
-local gui = make("ScreenGui")
-local main = make("Frame")
-local title = make("TextLabel")
-local holder = make("Frame")
-local layout = make("UIListLayout")
-local toggle = make("TextButton")
+local gui=i("ScreenGui")
+local main=i("Frame")
+local title=i("TextLabel")
+local list=i("Frame")
+local layout=i("UIListLayout")
+local close=i("TextButton")
 
-gui.Name = "BringUI"
-gui.ResetOnSpawn = false
+gui.Name="BringGui"
+gui.ResetOnSpawn=false
 
-main.Size = UDim2.new(0, 260, 0, 320)
-main.Position = UDim2.new(0.5, -130, 0.5, -160)
-main.BackgroundColor3 = Color3.fromRGB(25,25,25)
-main.BorderSizePixel = 0
-main.Parent = gui
+main.AnchorPoint=v2(0.5,0.5)
+main.Position=u2(0.5,0,0.5,0)
+main.Size=u2(0,260,0,320)
+main.BackgroundColor3=c3(0.12,0.12,0.12)
+main.BorderSizePixel=0
+main.Parent=gui
 
-title.Size = UDim2.new(1,0,0,28)
-title.BackgroundTransparency = 1
-title.Text = "BRING PANEL"
-title.TextColor3 = Color3.fromRGB(230,230,230)
-title.Parent = main
+title.Size=u2(1,0,0,28)
+title.BackgroundTransparency=1
+title.Text="FE BRING (Arc Engine)"
+title.TextColor3=c3(0.9,0.9,0.9)
+title.Parent=main
 
-toggle.Size = UDim2.new(0,28,0,28)
-toggle.Position = UDim2.new(1,-30,0,0)
-toggle.Text = "X"
-toggle.Parent = main
+close.Size=u2(0,28,0,28)
+close.Position=u2(1,-30,0,0)
+close.Text="X"
+close.Parent=main
 
-holder.Size = UDim2.new(1,-20,1,-40)
-holder.Position = UDim2.new(0,10,0,35)
-holder.BackgroundColor3 = Color3.fromRGB(35,35,35)
-holder.BorderSizePixel = 0
-holder.Parent = main
+list.Position=u2(0,10,0,35)
+list.Size=u2(1,-20,1,-45)
+list.BackgroundColor3=c3(0.18,0.18,0.18)
+list.BorderSizePixel=0
+list.Parent=main
 
-layout.Parent = holder
-layout.Padding = UDim.new(0,4)
+layout.Parent=list
+layout.Padding=UDim.new(0,4)
 
-local open = true
-toggle.MouseButton1Click:Connect(function()
-	open = not open
-	main.Visible = open
+local open=true
+close.MouseButton1Click:Connect(function()
+	open=not open
+	main.Visible=open
 end)
 
 local function hrp(p)
-	local c = p.Character
+	local c=p.Character
 	if not c then return end
 	return c:FindFirstChild("HumanoidRootPart")
 end
 
 local function clear()
-	for _, v in ipairs(holder:GetChildren()) do
-		if v:IsA("Frame") then
-			v:Destroy()
-		end
+	for _,v in ipairs(list:GetChildren()) do
+		if v:IsA("Frame") then v:Destroy() end
 	end
 end
 
 local function addPlayer(p)
-	if p == lp then return end
+	if p==lp then return end
 
-	local row = make("Frame")
-	row.Size = UDim2.new(1,0,0,32)
-	row.BackgroundColor3 = Color3.fromRGB(50,50,50)
-	row.BorderSizePixel = 0
-	row.Parent = holder
+	local row=i("Frame")
+	row.Size=u2(1,0,0,32)
+	row.BackgroundColor3=c3(0.25,0.25,0.25)
+	row.BorderSizePixel=0
+	row.Parent=list
 
-	local name = make("TextLabel")
-	name.Size = UDim2.new(0.65,0,1,0)
-	name.BackgroundTransparency = 1
-	name.Text = p.DisplayName .. " @" .. p.Name
-	name.TextColor3 = Color3.fromRGB(255,255,255)
-	name.Parent = row
+	local name=i("TextLabel")
+	name.Size=u2(0.65,0,1,0)
+	name.BackgroundTransparency=1
+	name.Text=p.DisplayName.." @"..p.Name
+	name.TextColor3=c3(1,1,1)
+	name.Parent=row
 
-	local btn = make("TextButton")
-	btn.Size = UDim2.new(0.3,0,0.8,0)
-	btn.Position = UDim2.new(0.68,0,0.1,0)
-	btn.Text = "BRING"
-	btn.Parent = row
+	local btn=i("TextButton")
+	btn.Size=u2(0.3,0,0.8,0)
+	btn.Position=u2(0.68,0,0.1,0)
+	btn.Text="BRING"
+	btn.Parent=row
 
 	btn.MouseButton1Click:Connect(function()
-		local target = p
-		local lpChar = lp.Character
-		local tChar = target.Character
-		if not (lpChar and tChar) then return end
+		local c=lp.Character
+		local c1=p.Character
+		if not (c and c1) then return end
 
-		local lpH = lpChar:FindFirstChild("HumanoidRootPart")
-		local tH = tChar:FindFirstChild("HumanoidRootPart")
-		if not (lpH and tH) then return end
+		local hrp=gp(c,"HumanoidRootPart","BasePart")
+		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
+		if not (hrp and hrp1) then return end
 
-		local start = tH.Position
-		local goal = lpH.Position - Vector3.new(0, 3, 0)
+		local from=hrp1.CFrame
+		local fromP=from.Position
+		local to=hrp.CFrame
+		local toP=to.Position
 
-		local distance = (start - goal).Magnitude
-		local dir = (goal - start).Unit
+		local mag=(fromP-toP).Magnitude-3
+		local lv=cf(fromP,toP).LookVector
+		local vel=0
+		local pos=from.Position-v3_010*2
+		toP=toP-v3_010*2
 
-		local speed = 0
-		local pos = start
-		local t = 0
+		local sine=osclock()
+		local lastsine=sine
+		local way=0
+		local reachedmaxspeed=false
 
-		while (pos - goal).Magnitude > 2 do
-			t += rs.RenderStepped:Wait()
+		while c:IsDescendantOf(ws) and c1:IsDescendantOf(ws) do
+			sine=osclock()
+			local deltaTime=sine-lastsine
+			lastsine=sine
 
-			local remaining = (pos - goal).Magnitude
-
-			if remaining < distance * 0.4 then
-				speed = math.max(speed - 2, 0)
+			if reachedmaxspeed then
+				if mag-way<reachedmaxspeed then
+					vel=vel-deltaTime*speeding
+					if vel<0 then break end
+				end
 			else
-				speed = math.min(speed + 2, 75)
+				if way>mag/2 then
+					vel=vel-deltaTime*speeding
+					if vel<0 then break end
+				else
+					vel=vel+deltaTime*speeding
+					if vel>maxspeed then
+						reachedmaxspeed=way
+						vel=maxspeed
+					end
+				end
 			end
 
-			pos = pos + dir * speed * rs.RenderStepped:Wait()
+			way=way+vel*deltaTime
 
-			if tChar and tChar.Parent then
-				tH.CFrame = cf(pos) * off
-				tH.AssemblyLinearVelocity = Vector3.zero
-				tH.AssemblyAngularVelocity = Vector3.zero
+			if hrp then
+				hrp.CFrame=cf(pos+lv*way,toP)*off
+				hrp.Velocity=lv*(vel+1)
+				hrp.RotVelocity=v3_0
 			end
+
+			twait()
 		end
 
-		tH.CFrame = cf(goal)
+		if hrp then
+			hrp.CFrame=to
+			hrp.Velocity=v3_0
+			hrp.RotVelocity=v3_0
+		end
 	end)
 end
 
 local function refresh()
 	clear()
-	for _, p in ipairs(plrs:GetPlayers()) do
+	for _,p in ipairs(plrs:GetPlayers()) do
 		addPlayer(p)
 	end
 end
@@ -160,5 +190,4 @@ plrs.PlayerAdded:Connect(refresh)
 plrs.PlayerRemoving:Connect(refresh)
 
 refresh()
-
-gui.Parent = lp:WaitForChild("PlayerGui")
+gui.Parent=lp:WaitForChild("PlayerGui")
