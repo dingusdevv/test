@@ -1,113 +1,260 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "BringPanel"
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+--------------------------------------------------------
+-- your original bring logic, untouched
+--------------------------------------------------------
 
-local Main = Instance.new("Frame")
-Main.Size = UDim2.new(0, 360, 0, 500)
-Main.Position = UDim2.new(0, 20, 0, 100)
-Main.BackgroundColor3 = Color3.fromRGB(28,28,28)
-Main.BorderSizePixel = 0
-Main.Parent = ScreenGui
+local rs = RunService
+local heartbeat = rs.Heartbeat
+local renderstepped = rs.RenderStepped
+local angles = CFrame.Angles
+local cf = CFrame.new
+local v3 = Vector3.new
+local v3_010 = v3(0,1,0)
+local v3_0 = v3(0,0,0)
+local osclock = os.clock
+local twait = task.wait
+local slower = string.lower
+local ssub = string.sub
 
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1,0,0,40)
-Title.BackgroundColor3 = Color3.fromRGB(35,35,35)
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Text = "Player Bring Panel"
-Title.TextScaled = true
-Title.Parent = Main
+local speeding = 32
+local maxspeed = 75
+local off = angles(-1.5707963267948966,0,0)
 
-local Search = Instance.new("TextBox")
-Search.Size = UDim2.new(1,-20,0,35)
-Search.Position = UDim2.new(0,10,0,50)
-Search.BackgroundColor3 = Color3.fromRGB(45,45,45)
-Search.TextColor3 = Color3.new(1,1,1)
-Search.PlaceholderText = "Search player..."
-Search.Parent = Main
-
-local Scroll = Instance.new("ScrollingFrame")
-Scroll.Size = UDim2.new(1,-20,1,-100)
-Scroll.Position = UDim2.new(0,10,0,95)
-Scroll.CanvasSize = UDim2.new(0,0,0,0)
-Scroll.ScrollBarThickness = 6
-Scroll.BackgroundColor3 = Color3.fromRGB(32,32,32)
-Scroll.BorderSizePixel = 0
-Scroll.Parent = Main
-
-local function createEntry(plr)
-    local Entry = Instance.new("Frame")
-    Entry.Size = UDim2.new(1,0,0,70)
-    Entry.BackgroundColor3 = Color3.fromRGB(50,50,50)
-    Entry.BorderSizePixel = 0
-
-    local Img = Instance.new("ImageLabel")
-    Img.Size = UDim2.new(0,55,0,55)
-    Img.Position = UDim2.new(0,7,0,7)
-    Img.BackgroundTransparency = 1
-    Img.Image = Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
-    Img.Parent = Entry
-
-    local Name = Instance.new("TextLabel")
-    Name.Size = UDim2.new(1,-140,1,0)
-    Name.Position = UDim2.new(0,70,0,0)
-    Name.BackgroundTransparency = 1
-    Name.TextColor3 = Color3.new(1,1,1)
-    Name.TextXAlignment = Enum.TextXAlignment.Left
-    Name.Text = plr.DisplayName.."  ["..plr.Name.."]"
-    Name.Parent = Entry
-
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0,65,0,40)
-    Btn.Position = UDim2.new(1,-75,0.5,-20)
-    Btn.Text = "Bring"
-    Btn.BackgroundColor3 = Color3.fromRGB(100,20,20)
-    Btn.TextColor3 = Color3.new(1,1,1)
-    Btn.Parent = Entry
-
-    Btn.MouseButton1Click:Connect(function()
-        if plr.Character and LocalPlayer.Character then
-            local hrp1 = plr.Character:FindFirstChild("HumanoidRootPart")
-            local hrp2 = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if hrp1 and hrp2 then
-                hrp1.CFrame = hrp2.CFrame + Vector3.new(0,3,0)
+local function gp(p,n,cl)
+    if typeof(p)=="Instance" then
+        for _,v in ipairs(p:GetChildren()) do
+            if v.Name == n and v:IsA(cl) then
+                return v
             end
         end
-    end)
-
-    return Entry
+    end
+    return nil
 end
 
-local function updateList()
-    for _, v in ipairs(Scroll:GetChildren()) do
+--------------------------------------------------------
+-- GUI CREATION
+--------------------------------------------------------
+
+local gui = Instance.new("ScreenGui")
+gui.ResetOnSpawn = false
+gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0,360,0,500)
+main.Position = UDim2.new(0,25,0.5,-250)
+main.BackgroundColor3 = Color3.fromRGB(30,30,30)
+main.BorderSizePixel = 0
+main.Parent = gui
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,0,0,40)
+title.BackgroundTransparency = 1
+title.Text = "FE Bring Panel"
+title.TextColor3 = Color3.new(1,1,1)
+title.TextScaled = true
+title.Parent = main
+
+local search = Instance.new("TextBox")
+search.Size = UDim2.new(1,-20,0,35)
+search.Position = UDim2.new(0,10,0,45)
+search.BackgroundColor3 = Color3.fromRGB(50,50,50)
+search.TextColor3 = Color3.new(1,1,1)
+search.PlaceholderText = "Search players..."
+search.Text = ""
+search.Parent = main
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1,-20,1,-90)
+scroll.Position = UDim2.new(0,10,0,85)
+scroll.CanvasSize = UDim2.new(0,0,0,0)
+scroll.ScrollBarThickness = 6
+scroll.BackgroundColor3 = Color3.fromRGB(40,40,40)
+scroll.BorderSizePixel = 0
+scroll.Parent = main
+
+--------------------------------------------------------
+-- PLAYER SEARCH FIX
+-- matches ANY part of the name or display name (case-insensitive)
+--------------------------------------------------------
+
+local function matches(plr, text)
+    if text == "" then return true end
+    text = text:lower()
+    return plr.Name:lower():find(text) or plr.DisplayName:lower():find(text)
+end
+
+--------------------------------------------------------
+-- BRING FUNCTION (YOUR ORIGINAL LOGIC)
+--------------------------------------------------------
+
+local bringing = false
+
+local function bringTarget(target)
+    if bringing then return end
+    bringing = true
+
+    local lp = LocalPlayer
+    local c = lp.Character
+    local c1 = target.Character
+    if not (c and c1) then bringing=false return end
+
+    local hrp = gp(c,"HumanoidRootPart","BasePart")
+    local hrp1 = gp(c1,"HumanoidRootPart","BasePart")
+    if not (hrp and hrp1) then bringing=false return end
+
+    local from = hrp1.CFrame
+    local to = hrp.CFrame
+
+    local fromP = from.Position
+    local toP = to.Position
+
+    local mag = (fromP-toP).Magnitude - 3
+    local lv = cf(fromP,toP).LookVector
+
+    local vel = 0
+    local pos = from.Position - v3_010*2
+    toP = toP - v3_010*2
+
+    local sine = osclock()
+    local lastsine = sine
+
+    local way = 0
+    local reachedmaxspeed = false
+
+    while bringing and c:IsDescendantOf(Workspace) and c1:IsDescendantOf(Workspace) do
+        sine = osclock()
+        local dt = sine - lastsine
+        lastsine = sine
+
+        if reachedmaxspeed then
+            if mag - way < reachedmaxspeed then
+                vel = vel - dt * speeding
+                if vel < 0 then break end
+            end
+        else
+            if way > mag/2 then
+                vel = vel - dt * speeding
+                if vel < 0 then break end
+            else
+                vel = vel + dt * speeding
+                if vel > maxspeed then
+                    reachedmaxspeed = way
+                    vel = maxspeed
+                end
+            end
+        end
+
+        way = way + vel*dt
+
+        if not hrp:IsGrounded() then
+            hrp.CFrame = cf(pos + lv*way, toP) * off
+            hrp.Velocity = lv*(vel+1)
+            hrp.RotVelocity = v3_0
+        end
+
+        twait()
+    end
+
+    hrp.CFrame = to
+    hrp.Velocity = v3_0
+    hrp.RotVelocity = v3_0
+
+    bringing = false
+end
+
+--------------------------------------------------------
+-- BUILD PLAYER LIST
+--------------------------------------------------------
+
+local function rebuildList()
+    for _,v in ipairs(scroll:GetChildren()) do
         if v:IsA("Frame") then v:Destroy() end
     end
 
     local y = 0
-    local text = Search.Text:lower()
+    local query = search.Text
 
-    for _, plr in ipairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer then
-            local dn = plr.DisplayName:lower()
-            local un = plr.Name:lower()
-            if dn:find(text) or un:find(text) then
-                local entry = createEntry(plr)
-                entry.Position = UDim2.new(0,0,0,y)
-                entry.Parent = Scroll
-                y += 75
-            end
+    for _,plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and matches(plr, query) then
+
+            local entry = Instance.new("Frame")
+            entry.Size = UDim2.new(1,0,0,70)
+            entry.Position = UDim2.new(0,0,0,y)
+            entry.BackgroundColor3 = Color3.fromRGB(55,55,55)
+            entry.BorderSizePixel = 0
+            entry.Parent = scroll
+
+            local img = Instance.new("ImageLabel")
+            img.Size = UDim2.new(0,60,0,60)
+            img.Position = UDim2.new(0,5,0,5)
+            img.BackgroundTransparency = 1
+            img.Image = Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+            img.Parent = entry
+
+            local lbl = Instance.new("TextLabel")
+            lbl.Position = UDim2.new(0,75,0,10)
+            lbl.Size = UDim2.new(1,-150,0,50)
+            lbl.BackgroundTransparency = 1
+            lbl.TextColor3 = Color3.new(1,1,1)
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.Text = plr.DisplayName.."  ["..plr.Name.."]"
+            lbl.Parent = entry
+
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0,60,0,40)
+            btn.Position = UDim2.new(1,-70,0.5,-20)
+            btn.BackgroundColor3 = Color3.fromRGB(150,50,50)
+            btn.TextColor3 = Color3.new(1,1,1)
+            btn.Text = "Bring"
+            btn.Parent = entry
+
+            btn.MouseButton1Click:Connect(function()
+                bringTarget(plr)
+            end)
+
+            y += 75
         end
     end
 
-    Scroll.CanvasSize = UDim2.new(0,0,0,y)
+    scroll.CanvasSize = UDim2.new(0,0,0,y)
 end
 
-Search:GetPropertyChangedSignal("Text"):Connect(updateList)
-Players.PlayerAdded:Connect(updateList)
-Players.PlayerRemoving:Connect(updateList)
+search:GetPropertyChangedSignal("Text"):Connect(rebuildList)
+Players.PlayerAdded:Connect(rebuildList)
+Players.PlayerRemoving:Connect(rebuildList)
 
-while task.wait(1) do
-    updateList()
-end
+rebuildList()
+
+--------------------------------------------------------
+-- optional: make the window draggable
+--------------------------------------------------------
+
+local dragging
+local dragStart
+local startPos
+
+main.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = main.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
