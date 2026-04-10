@@ -1,179 +1,142 @@
 local P = game:GetService("Players")
 local LP = P.LocalPlayer
+local function root(c) return c and c:FindFirstChild("HumanoidRootPart") end
 
-local function getRoot(char)
-	return char and char:FindFirstChild("HumanoidRootPart")
-end
-
-local UI = Instance.new("ScreenGui", LP:WaitForChild("PlayerGui"))
+local UI = Instance.new("ScreenGui", LP.PlayerGui)
 local F = Instance.new("Frame", UI)
-F.Size = UDim2.new(0,320,0,470)
-F.Position = UDim2.new(0,20,0,0)
-F.BackgroundColor3 = Color3.fromRGB(25,25,25)
-
-local T = Instance.new("TextLabel", F)
-T.Size = UDim2.new(1,0,0,35)
-T.Text = "Player Tools"
-T.BackgroundTransparency = 1
-T.TextColor3 = Color3.new(1,1,1)
+F.Size = UDim2.new(0,300,0,400)
+F.Position = UDim2.new(0,10,0,10)
+F.BackgroundColor3 = Color3.fromRGB(30,30,30)
 
 local S = Instance.new("TextBox", F)
 S.Size = UDim2.new(1,-20,0,30)
-S.Position = UDim2.new(0,10,0,40)
+S.Position = UDim2.new(0,10,0,10)
+S.PlaceholderText = "Search"
 S.BackgroundColor3 = Color3.fromRGB(40,40,40)
 S.TextColor3 = Color3.new(1,1,1)
-S.PlaceholderText = "Search"
 
 local L = Instance.new("ScrollingFrame", F)
-L.Position = UDim2.new(0,10,0,80)
-L.Size = UDim2.new(1,-20,1,-90)
-L.BackgroundColor3 = Color3.fromRGB(30,30,30)
-L.ScrollBarThickness = 5
+L.Position = UDim2.new(0,10,0,50)
+L.Size = UDim2.new(1,-20,1,-60)
+L.CanvasSize = UDim2.new()
 
--- mobile drag
-local dragging, dx, dy
+-- Mobile drag
 local UIS = game:GetService("UserInputService")
+local drag,dx,dy
 F.InputBegan:Connect(function(i)
 	if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then
-		dragging = true
-		dx = i.Position.X - F.AbsolutePosition.X
-		dy = i.Position.Y - F.AbsolutePosition.Y
+		drag=true dx=i.Position.X-F.AbsolutePosition.X dy=i.Position.Y-F.AbsolutePosition.Y
 	end
 end)
-F.InputEnded:Connect(function(i)
-	if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then
-		dragging = false
-	end
-end)
+F.InputEnded:Connect(function(i) if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then drag=false end end)
 UIS.InputChanged:Connect(function(i)
-	if dragging and (i.UserInputType.Name=="MouseMovement" or i.UserInputType.Name=="Touch") then
-		F.Position = UDim2.fromOffset(i.Position.X - dx, i.Position.Y - dy)
+	if drag and (i.UserInputType.Name=="MouseMovement" or i.UserInputType.Name=="Touch") then
+		F.Position = UDim2.fromOffset(i.Position.X-dx,i.Position.Y-dy)
 	end
 end)
 
 ---------------------------------------------------------
--- FIXED FLING (always TP back + never breaks bring)
+-- FLING (compact + auto-stop if target moves fast)
 ---------------------------------------------------------
-local function flingPlayer(target)
-	local myChar = LP.Character
-	local root = getRoot(myChar)
-	local tChar = target.Character
-	local tRoot = getRoot(tChar)
+local function fling(pl)
+	local my = root(LP.Character)
+	local tar = root(pl.Character)
+	if not (my and tar) then return end
 
-	if not (root and tRoot) then return end
-
-	local savedCF = root.CFrame
-
-	local BV = Instance.new("BodyVelocity")
-	BV.Velocity = Vector3.new(999999999,999999999,999999999)
+	local save = my.CFrame
+	local BV = Instance.new("BodyVelocity", my)
 	BV.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-	BV.Parent = root
+	BV.Velocity = Vector3.new(9e8,9e8,9e8)
 
-	local start = tick()
-	while tick() - start < 0.5 do
-		if not tRoot.Parent then break end
-		root.CFrame = tRoot.CFrame * CFrame.new(0,1.5,0)
-		root.Velocity = Vector3.new(99999999,99999999,99999999)
+	local last = tar.CFrame.Position
+	local t0 = tick()
+
+	while tick()-t0 < .5 do
+		if not tar.Parent then break end
+
+		-- target moved dramatically?
+		if (tar.CFrame.Position - last).Magnitude > 8 or tar.Velocity.Magnitude > 15 then
+			break
+		end
+		last = tar.CFrame.Position
+
+		my.CFrame = tar.CFrame * CFrame.new(0,1.5,0)
 		task.wait()
 	end
 
 	BV:Destroy()
-
-	-- restore you safely
 	task.wait()
-	if root.Parent then
-		root.CFrame = savedCF
+	if my.Parent then my.CFrame = save end
+end
+
+---------------------------------------------------------
+-- BRING (fixed)
+---------------------------------------------------------
+local function bring(pl)
+	local my = root(LP.Character)
+	local tar = root(pl.Character)
+	if my and tar then
+		tar.CFrame = my.CFrame + Vector3.new(0,3,0)
 	end
 end
 
 ---------------------------------------------------------
--- Bring (fixed and guaranteed working again)
----------------------------------------------------------
-local function bringPlayer(target)
-	local tChar = target.Character
-	local myChar = LP.Character
-	local tRoot = getRoot(tChar)
-	local myRoot = getRoot(myChar)
-
-	if tRoot and myRoot then
-		tRoot.CFrame = myRoot.CFrame + Vector3.new(0,3,0)
-	end
-end
-
----------------------------------------------------------
--- UI GENERATION
+-- UI generation (compact)
 ---------------------------------------------------------
 local function refresh()
-	for _,x in ipairs(L:GetChildren()) do
-		if x:IsA("Frame") then x:Destroy() end
-	end
-
-	local y = 0
-	local text = S.Text:lower()
+	for _,v in ipairs(L:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
+	local y=0
+	local q=S.Text:lower()
 
 	for _,pl in ipairs(P:GetPlayers()) do
-		if pl ~= LP then
-			local dn = pl.DisplayName:lower()
-			local un = pl.Name:lower()
+		if pl~=LP then
+			local dn,un = pl.DisplayName:lower(), pl.Name:lower()
+			if dn:find(q) or un:find(q) then
+				local R=Instance.new("Frame",L)
+				R.Size=UDim2.new(1,0,0,55)
+				R.Position=UDim2.new(0,0,0,y)
+				R.BackgroundColor3=Color3.fromRGB(50,50,50)
 
-			if dn:find(text) or un:find(text) then
-				local E = Instance.new("Frame")
-				E.Size = UDim2.new(1,0,0,60)
-				E.Position = UDim2.new(0,0,0,y)
-				E.BackgroundColor3 = Color3.fromRGB(50,50,50)
-				E.Parent = L
+				local H=Instance.new("ImageLabel",R)
+				H.Size=UDim2.new(0,45,0,45)
+				H.Position=UDim2.new(0,5,0,5)
+				H.BackgroundTransparency=1
+				local img=P:GetUserThumbnailAsync(pl.UserId,Enum.ThumbnailType.HeadShot,Enum.ThumbnailSize.Size100x100)
+				H.Image=img
 
-				local head = Instance.new("ImageLabel", E)
-				head.Size = UDim2.new(0,50,0,50)
-				head.Position = UDim2.new(0,5,0,5)
-				head.BackgroundTransparency = 1
-				local img = P:GetUserThumbnailAsync(pl.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
-				head.Image = img
+				local N=Instance.new("TextLabel",R)
+				N.Size=UDim2.new(.55,0,1,0)
+				N.Position=UDim2.new(0,55,0,0)
+				N.BackgroundTransparency=1
+				N.TextColor3=Color3.new(1,1,1)
+				N.Text=pl.DisplayName.." ["..pl.Name.."]"
+				N.TextXAlignment=Enum.TextXAlignment.Left
 
-				local name = Instance.new("TextLabel", E)
-				name.Size = UDim2.new(0.6,0,1,0)
-				name.Position = UDim2.new(0,60,0,0)
-				name.BackgroundTransparency = 1
-				name.TextColor3 = Color3.new(1,1,1)
-				name.TextXAlignment = Enum.TextXAlignment.Left
-				name.Text = pl.DisplayName.." ["..pl.Name.."]"
+				local B=Instance.new("TextButton",R)
+				B.Size=UDim2.new(0,55,0,25)
+				B.Position=UDim2.new(1,-120,0.5,-12)
+				B.Text="Bring"
+				B.BackgroundColor3=Color3.fromRGB(150,20,20)
+				B.TextColor3=Color3.new(1,1,1)
+				B.MouseButton1Click:Connect(function() bring(pl) end)
 
-				---------------------------------------------------
-				-- Bring button
-				---------------------------------------------------
-				local bring = Instance.new("TextButton", E)
-				bring.Size = UDim2.new(0,55,0,25)
-				bring.Position = UDim2.new(1,-120,0.5,-12)
-				bring.Text = "Bring"
-				bring.BackgroundColor3 = Color3.fromRGB(150,20,20)
-				bring.TextColor3 = Color3.new(1,1,1)
-				bring.MouseButton1Click:Connect(function()
-					bringPlayer(pl)
-				end)
+				local Fg=Instance.new("TextButton",R)
+				Fg.Size=UDim2.new(0,55,0,25)
+				Fg.Position=UDim2.new(1,-60,0.5,-12)
+				Fg.Text="Fling"
+				Fg.BackgroundColor3=Color3.fromRGB(20,80,150)
+				Fg.TextColor3=Color3.new(1,1,1)
+				Fg.MouseButton1Click:Connect(function() fling(pl) end)
 
-				---------------------------------------------------
-				-- Fling button
-				---------------------------------------------------
-				local fling = Instance.new("TextButton", E)
-				fling.Size = UDim2.new(0,55,0,25)
-				fling.Position = UDim2.new(1,-60,0.5,-12)
-				fling.Text = "Fling"
-				fling.BackgroundColor3 = Color3.fromRGB(20,80,150)
-				fling.TextColor3 = Color3.new(1,1,1)
-				fling.MouseButton1Click:Connect(function()
-					flingPlayer(pl)
-				end)
-
-				y += 65
+				y+=60
 			end
 		end
 	end
 
-	L.CanvasSize = UDim2.new(0,0,0,y)
+	L.CanvasSize=UDim2.new(0,0,0,y)
 end
 
 S:GetPropertyChangedSignal("Text"):Connect(refresh)
 P.PlayerAdded:Connect(refresh)
 P.PlayerRemoving:Connect(refresh)
-
-while task.wait(1) do refresh() end
+task.spawn(function() while task.wait(1) do refresh() end end)
