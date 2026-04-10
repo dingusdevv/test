@@ -446,66 +446,60 @@ bringBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ── SPEED ASSIST ──
--- Each frame: read target's walk velocity. If moving, run the same
--- bring acceleration loop but chasing their current position in real time.
--- My HRP sits 2 studs below their HRP (same offset as bring uses).
--- Velocity drives me in their walk direction with acceleration = speed boost.
-
-local assisting=false
+local assisting = false
 
 task.spawn(function()
 	while true do
 		twait()
-
-		-- start or stop assist loop based on toggle + target
 		if speedEnabled and target and not bringing and not assisting then
-			assisting=true
+			assisting = true
 			task.spawn(function()
 				while speedEnabled and target and not bringing do
-					local c=lp.Character
-					local c1=target and target.Character
+					local c = lp.Character
+					local c1 = target and target.Character
 					if not (c and c1) then twait() continue end
 					if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then twait() continue end
-					local hrp=gp(c,"HumanoidRootPart","BasePart")
-					local hrp1=gp(c1,"HumanoidRootPart","BasePart")
+					local hrp = gp(c, "HumanoidRootPart", "BasePart")
+					local hrp1 = gp(c1, "HumanoidRootPart", "BasePart")
 					if not (hrp and hrp1) then twait() continue end
 
-					-- read their walk velocity this frame
-					local tv=hrp1.Velocity
-					local horizV=v3(tv.X,0,tv.Z)
-					local walkspeed=horizV.Magnitude
+					local tv = hrp1.Velocity
+					local horizV = v3(tv.X, 0, tv.Z)
+					local walkspeed = horizV.Magnitude
 
-					if walkspeed>0.5 then
-						-- they are walking: accelerate my hrp in that direction
-						-- using same style as bring — velocity proportional to their speed
-						-- boosted so I push them faster than they'd walk alone
-						local dir=horizV.Unit
+					if walkspeed > 0.5 then
+						local dir = horizV.Unit
 
-						-- position: same as bring — 2 studs below their feet
-						-- (bring uses pos = from.Position - v3_010*2 which is 1 stud below,
-						--  here we match that: hrp1.Position - v3_010*2)
-						local underPos=(hrp1.Position-v3_010*2)
+						-- Project slightly AHEAD of them in their walk direction
+						-- so my hrp pulls them forward rather than sitting under them
+						local aheadDist = 4  -- studs ahead of target
+						local aheadPos = hrp1.Position + dir * aheadDist - v3_010 * 2
 
-						-- face direction of travel, apply offset like bring does
-						hrp.CFrame=cf(underPos,underPos+dir)*off
-						-- drive velocity = their walkspeed * multiplier
-						-- this accelerates them because I'm a physical platform under them
-						hrp.Velocity=dir*(walkspeed*3)
-						hrp.RotVelocity=v3_0
+						-- Bring-style: track position each tick, drive velocity toward ahead point
+						local toVec = aheadPos - hrp.Position
+						local dist = toVec.Magnitude
+						local moveDir = dist > 0.1 and toVec.Unit or dir
+
+						-- Velocity scales with their walkspeed but boosted,
+						-- clamped so it doesn't fly off infinitely
+						local driveSpeed = math.min(walkspeed * 4, maxspeed)
+
+						hrp.CFrame = cf(hrp.Position, hrp.Position + moveDir) * off
+						hrp.Velocity = moveDir * driveSpeed
+						hrp.RotVelocity = v3_0
 					else
-						-- stopped: sit directly under them, no push
-						local underPos=(hrp1.Position-v3_010*2)
-						hrp.CFrame=cf(underPos)*off
-						hrp.Velocity=v3_0
-						hrp.RotVelocity=v3_0
+						-- Stopped: park under them
+						hrp.CFrame = cf(hrp1.Position - v3_010 * 2) * off
+						hrp.Velocity = v3_0
+						hrp.RotVelocity = v3_0
 					end
 
 					twait()
 				end
-				assisting=false
+				assisting = false
 			end)
 		elseif (not speedEnabled or not target or bringing) and assisting then
-			assisting=false
+			assisting = false
 		end
 	end
 end)
