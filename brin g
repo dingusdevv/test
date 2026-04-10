@@ -467,7 +467,6 @@ task.spawn(function()
 					local horizV = v3(tv.X, 0, tv.Z)
 					local walkspeed = horizV.Magnitude
 
-					-- only run a bring-cycle if they are actually walking
 					if walkspeed <= 0.5 then
 						twait()
 						continue
@@ -475,65 +474,60 @@ task.spawn(function()
 
 					local dir = horizV.Unit
 
-					-- target point: 50 studs ahead of them in walk direction, 2 below feet
-					local fromP = hrp.Position - v3_010 * 2
-					local toP   = hrp1.Position + dir * 50 - v3_010 * 2
+					-- foot Y: target HRP Y minus half their HRP size (puts us at sole level)
+					local footY = hrp1.Position.Y - hrp1.Size.Y / 2
 
-					local mag = (fromP - toP).Magnitude
 					local vel = 0
 					local way = 0
 					local reachedmaxspeed = false
-
 					local sine = osclock()
 					local lastsine = sine
 
-					-- inner bring loop — runs until destination reached OR they stop OR toggle off
 					while bringing == false and speedEnabled and target do
 						sine = osclock()
 						local dt = sine - lastsine
 						lastsine = sine
 
-						-- re-check they are still walking; if not, abort this cycle
 						local tv2 = hrp1.Velocity
 						local hv2 = v3(tv2.X, 0, tv2.Z)
 						if hv2.Magnitude <= 0.5 then break end
 
-						-- re-sample direction and destination every tick so turning works
 						dir = hv2.Unit
-						toP = hrp1.Position + dir * 50 - v3_010 * 2
+
+						-- always recalc footY each tick so stairs/slopes stay correct
+						footY = hrp1.Position.Y - hrp1.Size.Y / 2
+
+						-- my position: directly under their feet, ahead in walk dir
+						local basePos = v3(hrp1.Position.X, footY, hrp1.Position.Z)
+						local toP = basePos + dir * 50
 
 						if reachedmaxspeed then
-							if mag - way < reachedmaxspeed then
+							if (basePos - v3(hrp.Position.X, footY, hrp.Position.Z)).Magnitude < reachedmaxspeed then
 								vel = vel - dt * speeding
 								if vel < 0 then break end
 							end
 						else
-							if way > mag / 2 then
-								vel = vel - dt * speeding
-								if vel < 0 then break end
-							else
-								vel = vel + dt * speeding
-								if vel > maxspeed then
-									reachedmaxspeed = way
-									vel = maxspeed
-								end
+							vel = vel + dt * speeding
+							if vel > maxspeed then
+								reachedmaxspeed = way
+								vel = maxspeed
 							end
 						end
 
 						way = way + vel * dt
 
-						if not hrp:IsGrounded() then
-							local newPos = fromP + dir * way
-							hrp.CFrame = cf(newPos, toP) * off
-							hrp.Velocity = dir * (vel + 1)
-							hrp.RotVelocity = v3_0
-						end
+						-- place me at foot level under them, pushed forward
+						local newPos = v3(basePos.X + dir.X * way, footY, basePos.Z + dir.Z * way)
+						hrp.CFrame = cf(newPos, toP) * off
+						hrp.Velocity = dir * (vel + 1)
+						hrp.RotVelocity = v3_0
 
 						twait()
 					end
 
-					-- snap back under them cleanly after each cycle
-					hrp.CFrame = cf(hrp1.Position - v3_010 * 2) * off
+					-- park cleanly under feet when cycle ends
+					local footYFinal = hrp1.Position.Y - hrp1.Size.Y / 2
+					hrp.CFrame = cf(v3(hrp1.Position.X, footYFinal, hrp1.Position.Z)) * off
 					hrp.Velocity = v3_0
 					hrp.RotVelocity = v3_0
 				end
