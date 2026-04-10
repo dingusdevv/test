@@ -509,7 +509,7 @@ task.spawn(function()
 						-- if my hrp is more than 4 studs ahead of target in walk dir, reset
 						local myHorizPos = v3(hrp.Position.X, footY, hrp.Position.Z)
 						local ahead = (myHorizPos - basePos):Dot(dir)
-						if ahead > 4 then
+						if ahead > 20 then
 							vel = 0
 							way = 0
 							reachedmaxspeed = false
