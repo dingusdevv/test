@@ -616,7 +616,7 @@ task.spawn(function()
 						-- clamp: if more than 4 studs ahead in walk dir, reset
 						local myHorizPos=v3(hrp.Position.X,footY,hrp.Position.Z)
 						local ahead=(myHorizPos-basePos):Dot(dir)
-						if ahead>25 then
+						if ahead>75 then
 							vel=0
 							way=0
 							reachedmaxspeed=false
