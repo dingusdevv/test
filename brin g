@@ -1,118 +1,145 @@
 local Players = game:GetService("Players")
-local lp = Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
-local gui = Instance.new("ScreenGui", game.CoreGui)
-gui.Name = "LocalAdminPanel"
+local ScreenGui = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Search = Instance.new("TextBox")
+local List = Instance.new("ScrollingFrame")
+local Bring = Instance.new("TextButton")
+local Info = Instance.new("TextLabel")
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 260, 0, 340)
-frame.Position = UDim2.new(0.5, -130, 0.5, -170)
-frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
-frame.Active = true
-frame.Draggable = true
-Instance.new("UICorner", frame)
+ScreenGui.Name = "BringUI"
 
-local search = Instance.new("TextBox", frame)
-search.Size = UDim2.new(1, -20, 0, 30)
-search.Position = UDim2.new(0,10,0,10)
-search.PlaceholderText = "Search player..."
-search.Text = ""
+Main.Size = UDim2.new(0, 260, 0, 320)
+Main.Position = UDim2.new(0.5, -130, 0.5, -160)
+Main.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Main.BorderSizePixel = 0
+Main.Parent = ScreenGui
 
-local list = Instance.new("ScrollingFrame", frame)
-list.Size = UDim2.new(1, -20, 1, -120)
-list.Position = UDim2.new(0,10,0,50)
-list.BackgroundColor3 = Color3.fromRGB(35,35,35)
-list.ScrollBarThickness = 4
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "Player Bring"
+Title.TextColor3 = Color3.fromRGB(220, 220, 220)
+Title.Parent = Main
 
-local layout = Instance.new("UIListLayout", list)
+Search.Size = UDim2.new(1, -20, 0, 30)
+Search.Position = UDim2.new(0, 10, 0, 35)
+Search.PlaceholderText = "Search player..."
+Search.Text = ""
+Search.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+Search.TextColor3 = Color3.fromRGB(255, 255, 255)
+Search.BorderSizePixel = 0
+Search.Parent = Main
+
+List.Size = UDim2.new(1, -20, 0, 180)
+List.Position = UDim2.new(0, 10, 0, 75)
+List.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+List.BorderSizePixel = 0
+List.ScrollBarThickness = 4
+List.Parent = Main
+
+local layout = Instance.new("UIListLayout")
+layout.Parent = List
+layout.Padding = UDim.new(0, 4)
+
+Bring.Size = UDim2.new(1, -20, 0, 35)
+Bring.Position = UDim2.new(0, 10, 1, -50)
+Bring.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+Bring.Text = "BRING"
+Bring.TextColor3 = Color3.fromRGB(255, 255, 255)
+Bring.BorderSizePixel = 0
+Bring.Parent = Main
+
+Info.Size = UDim2.new(1, -20, 0, 20)
+Info.Position = UDim2.new(0, 10, 1, -75)
+Info.BackgroundTransparency = 1
+Info.TextColor3 = Color3.fromRGB(180, 180, 180)
+Info.Text = ""
+Info.Parent = Main
+
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local selected
 
--- smart partial match (fixed + compact)
-local function match(p, t)
-	t = t:lower()
-	return p.Name:lower():sub(1,#t) == t
-		or p.DisplayName:lower():sub(1,#t) == t
+local function getPlayers()
+	local t = {}
+	for _, p in ipairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer then
+			table.insert(t, p)
+		end
+	end
+	return t
 end
 
-local function getHRP()
-	local c = lp.Character
-	return c and c:FindFirstChild("HumanoidRootPart")
+local function score(name, q)
+	name = string.lower(name)
+	q = string.lower(q)
+	if q == "" then return 1 end
+	if name == q then return 100 end
+	if string.sub(name, 1, #q) == q then return 90 end
+	if string.find(name, q, 1, true) then return 50 end
+	return 0
+end
+
+local function clearList()
+	for _, v in ipairs(List:GetChildren()) do
+		if v:IsA("TextButton") then
+			v:Destroy()
+		end
+	end
+end
+
+local function addButton(player)
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.new(1, -5, 0, 28)
+	b.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	b.BorderSizePixel = 0
+	b.TextColor3 = Color3.fromRGB(255, 255, 255)
+	b.Text = player.DisplayName .. " (@" .. player.Name .. ")"
+	b.Parent = List
+
+	b.MouseButton1Click:Connect(function()
+		selected = player
+		Info.Text = "Selected: " .. player.Name
+	end)
 end
 
 local function refresh()
-	for _,v in ipairs(list:GetChildren()) do
-		if v:IsA("TextButton") then v:Destroy() end
-	end
+	clearList()
 
-	for _,p in ipairs(Players:GetPlayers()) do
-		if p ~= lp then
-			if search.Text == "" or match(p, search.Text) then
-				local b = Instance.new("TextButton", list)
-				b.Size = UDim2.new(1,0,0,30)
-				b.Text = p.DisplayName .. " @" .. p.Name
-				b.BackgroundColor3 = Color3.fromRGB(45,45,45)
-				b.TextColor3 = Color3.new(1,1,1)
+	local query = Search.Text
+	local players = getPlayers()
 
-				b.MouseButton1Click:Connect(function()
-					selected = p
-				end)
-			end
+	table.sort(players, function(a, b)
+		return score(a.Name, query) > score(b.Name, query)
+	end)
+
+	for _, p in ipairs(players) do
+		if score(p.Name, query) > 0 or score(p.DisplayName, query) > 0 then
+			addButton(p)
 		end
 	end
-
-	task.wait()
-	list.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y)
 end
 
-search:GetPropertyChangedSignal("Text"):Connect(refresh)
+Search:GetPropertyChangedSignal("Text"):Connect(refresh)
 Players.PlayerAdded:Connect(refresh)
 Players.PlayerRemoving:Connect(refresh)
 
-task.spawn(function()
-	while true do
-		refresh()
-		task.wait(2)
-	end
-end)
-
--- BRING (local = teleport YOU to target)
-local bring = Instance.new("TextButton", frame)
-bring.Size = UDim2.new(0.5,-15,0,40)
-bring.Position = UDim2.new(0,10,1,-80)
-bring.Text = "BRING"
-
-bring.MouseButton1Click:Connect(function()
-	if not selected then return end
-	local hrp = getHRP()
-	local thrp = selected.Character and selected.Character:FindFirstChild("HumanoidRootPart")
-	if hrp and thrp then
-		hrp.CFrame = thrp.CFrame * CFrame.new(0,0,-3)
-	end
-end)
-
--- FLING (local = launch YOU toward target for 1 second, then return)
-local fling = Instance.new("TextButton", frame)
-fling.Size = UDim2.new(0.5,-15,0,40)
-fling.Position = UDim2.new(0.5,5,1,-80)
-fling.Text = "FLING"
-
-fling.MouseButton1Click:Connect(function()
+Bring.MouseButton1Click:Connect(function()
 	if not selected then return end
 
-	local hrp = getHRP()
-	local thrp = selected.Character and selected.Character:FindFirstChild("HumanoidRootPart")
+	local char = LocalPlayer.Character
+	local targetChar = selected.Character
+	if not (char and targetChar) then return end
+
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	local thrp = targetChar:FindFirstChild("HumanoidRootPart")
 	if not (hrp and thrp) then return end
 
-	local old = hrp.CFrame
-	local start = tick()
-
-	while tick() - start < 1 do
-		local dir = (thrp.Position - hrp.Position).Unit
-		hrp.AssemblyLinearVelocity = dir * 120 + Vector3.new(0,60,0)
-		task.wait()
-	end
-
-	hrp.CFrame = old
-	hrp.AssemblyLinearVelocity = Vector3.zero
+	thrp.CFrame = hrp.CFrame * CFrame.new(0, 0, -3)
 end)
+
+refresh()
