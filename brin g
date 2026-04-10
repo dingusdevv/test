@@ -491,12 +491,29 @@ task.spawn(function()
 						local hv2 = v3(tv2.X, 0, tv2.Z)
 						if hv2.Magnitude <= 0.5 then break end
 
-						dir = hv2.Unit
+						local newDir = hv2.Unit
 
+						-- if they turned (~30 deg threshold), reset cycle
+						if dir:Dot(newDir) < 0.85 then
+							vel = 0
+							way = 0
+							reachedmaxspeed = false
+						end
+
+						dir = newDir
 						footY = hrp1.Position.Y - hrp1.Size.Y / 2
 
 						local basePos = v3(hrp1.Position.X, footY, hrp1.Position.Z)
 						local toP = basePos + dir * 50
+
+						-- if my hrp is more than 4 studs ahead of target in walk dir, reset
+						local myHorizPos = v3(hrp.Position.X, footY, hrp.Position.Z)
+						local ahead = (myHorizPos - basePos):Dot(dir)
+						if ahead > 4 then
+							vel = 0
+							way = 0
+							reachedmaxspeed = false
+						end
 
 						if reachedmaxspeed then
 							if (basePos - v3(hrp.Position.X, footY, hrp.Position.Z)).Magnitude < reachedmaxspeed then
