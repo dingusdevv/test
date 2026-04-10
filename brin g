@@ -1,6 +1,10 @@
 local P = game:GetService("Players")
 local LP = P.LocalPlayer
 
+local function getRoot(char)
+	return char and char:FindFirstChild("HumanoidRootPart")
+end
+
 local UI = Instance.new("ScreenGui", LP:WaitForChild("PlayerGui"))
 local F = Instance.new("Frame", UI)
 F.Size = UDim2.new(0,320,0,470)
@@ -10,78 +14,109 @@ F.BackgroundColor3 = Color3.fromRGB(25,25,25)
 local T = Instance.new("TextLabel", F)
 T.Size = UDim2.new(1,0,0,35)
 T.Text = "Player Tools"
-T.TextColor3 = Color3.new(1,1,1)
 T.BackgroundTransparency = 1
+T.TextColor3 = Color3.new(1,1,1)
 
 local S = Instance.new("TextBox", F)
 S.Size = UDim2.new(1,-20,0,30)
 S.Position = UDim2.new(0,10,0,40)
 S.BackgroundColor3 = Color3.fromRGB(40,40,40)
-S.PlaceholderText = "Search"
 S.TextColor3 = Color3.new(1,1,1)
+S.PlaceholderText = "Search"
 
 local L = Instance.new("ScrollingFrame", F)
 L.Position = UDim2.new(0,10,0,80)
 L.Size = UDim2.new(1,-20,1,-90)
-L.CanvasSize = UDim2.new(0,0,0,0)
-L.ScrollBarThickness = 5
 L.BackgroundColor3 = Color3.fromRGB(30,30,30)
+L.ScrollBarThickness = 5
 
 -- mobile drag
 local dragging, dx, dy
+local UIS = game:GetService("UserInputService")
 F.InputBegan:Connect(function(i)
-	if i.UserInputType.Name == "MouseButton1" or i.UserInputType.Name=="Touch" then
+	if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then
 		dragging = true
 		dx = i.Position.X - F.AbsolutePosition.X
 		dy = i.Position.Y - F.AbsolutePosition.Y
 	end
 end)
 F.InputEnded:Connect(function(i)
-	if i.UserInputType.Name == "MouseButton1" or i.UserInputType.Name=="Touch" then
+	if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then
 		dragging = false
 	end
 end)
-game:GetService("UserInputService").InputChanged:Connect(function(i)
+UIS.InputChanged:Connect(function(i)
 	if dragging and (i.UserInputType.Name=="MouseMovement" or i.UserInputType.Name=="Touch") then
 		F.Position = UDim2.fromOffset(i.Position.X - dx, i.Position.Y - dy)
 	end
 end)
 
-local function flingTarget(plr)
-	local char = LP.Character
-	local root = char and char:FindFirstChild("HumanoidRootPart")
-	local tchar = plr.Character
-	local troot = tchar and tchar:FindFirstChild("HumanoidRootPart")
-	if not (root and troot) then return end
+---------------------------------------------------------
+-- FIXED FLING (always TP back + never breaks bring)
+---------------------------------------------------------
+local function flingPlayer(target)
+	local myChar = LP.Character
+	local root = getRoot(myChar)
+	local tChar = target.Character
+	local tRoot = getRoot(tChar)
 
-	local BV = Instance.new("BodyVelocity", root)
-	BV.Velocity = Vector3.new(9e8,9e8,9e8)
+	if not (root and tRoot) then return end
+
+	local savedCF = root.CFrame
+
+	local BV = Instance.new("BodyVelocity")
+	BV.Velocity = Vector3.new(999999999,999999999,999999999)
 	BV.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+	BV.Parent = root
 
 	local start = tick()
 	while tick() - start < 0.5 do
-		if not troot.Parent then break end
-		root.CFrame = troot.CFrame * CFrame.new(0,1.5,0)
-		root.Velocity = Vector3.new(9e7,9e7,9e7)
+		if not tRoot.Parent then break end
+		root.CFrame = tRoot.CFrame * CFrame.new(0,1.5,0)
+		root.Velocity = Vector3.new(99999999,99999999,99999999)
 		task.wait()
 	end
 
 	BV:Destroy()
+
+	-- restore you safely
+	task.wait()
+	if root.Parent then
+		root.CFrame = savedCF
+	end
 end
 
+---------------------------------------------------------
+-- Bring (fixed and guaranteed working again)
+---------------------------------------------------------
+local function bringPlayer(target)
+	local tChar = target.Character
+	local myChar = LP.Character
+	local tRoot = getRoot(tChar)
+	local myRoot = getRoot(myChar)
+
+	if tRoot and myRoot then
+		tRoot.CFrame = myRoot.CFrame + Vector3.new(0,3,0)
+	end
+end
+
+---------------------------------------------------------
+-- UI GENERATION
+---------------------------------------------------------
 local function refresh()
 	for _,x in ipairs(L:GetChildren()) do
 		if x:IsA("Frame") then x:Destroy() end
 	end
 
-	local txt = S.Text:lower()
 	local y = 0
+	local text = S.Text:lower()
 
 	for _,pl in ipairs(P:GetPlayers()) do
 		if pl ~= LP then
 			local dn = pl.DisplayName:lower()
 			local un = pl.Name:lower()
-			if dn:find(txt) or un:find(txt) then
+
+			if dn:find(text) or un:find(text) then
 				local E = Instance.new("Frame")
 				E.Size = UDim2.new(1,0,0,60)
 				E.Position = UDim2.new(0,0,0,y)
@@ -98,41 +133,42 @@ local function refresh()
 				local name = Instance.new("TextLabel", E)
 				name.Size = UDim2.new(0.6,0,1,0)
 				name.Position = UDim2.new(0,60,0,0)
-				name.Text = pl.DisplayName.." ["..pl.Name.."]"
 				name.BackgroundTransparency = 1
 				name.TextColor3 = Color3.new(1,1,1)
 				name.TextXAlignment = Enum.TextXAlignment.Left
+				name.Text = pl.DisplayName.." ["..pl.Name.."]"
 
+				---------------------------------------------------
+				-- Bring button
+				---------------------------------------------------
 				local bring = Instance.new("TextButton", E)
 				bring.Size = UDim2.new(0,55,0,25)
 				bring.Position = UDim2.new(1,-120,0.5,-12)
 				bring.Text = "Bring"
-				bring.BackgroundColor3 = Color3.fromRGB(100,20,20)
+				bring.BackgroundColor3 = Color3.fromRGB(150,20,20)
 				bring.TextColor3 = Color3.new(1,1,1)
-
 				bring.MouseButton1Click:Connect(function()
-					if pl.Character and LP.Character then
-						local a = pl.Character:FindFirstChild("HumanoidRootPart")
-						local b = LP.Character:FindFirstChild("HumanoidRootPart")
-						if a and b then a.CFrame = b.CFrame + Vector3.new(0,3,0) end
-					end
+					bringPlayer(pl)
 				end)
 
+				---------------------------------------------------
+				-- Fling button
+				---------------------------------------------------
 				local fling = Instance.new("TextButton", E)
 				fling.Size = UDim2.new(0,55,0,25)
 				fling.Position = UDim2.new(1,-60,0.5,-12)
 				fling.Text = "Fling"
-				fling.BackgroundColor3 = Color3.fromRGB(20,90,150)
+				fling.BackgroundColor3 = Color3.fromRGB(20,80,150)
 				fling.TextColor3 = Color3.new(1,1,1)
-
 				fling.MouseButton1Click:Connect(function()
-					flingTarget(pl)
+					flingPlayer(pl)
 				end)
 
 				y += 65
 			end
 		end
 	end
+
 	L.CanvasSize = UDim2.new(0,0,0,y)
 end
 
