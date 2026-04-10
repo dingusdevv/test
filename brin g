@@ -1,0 +1,113 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "BringPanel"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 360, 0, 500)
+Main.Position = UDim2.new(0, 20, 0, 100)
+Main.BackgroundColor3 = Color3.fromRGB(28,28,28)
+Main.BorderSizePixel = 0
+Main.Parent = ScreenGui
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1,0,0,40)
+Title.BackgroundColor3 = Color3.fromRGB(35,35,35)
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Text = "Player Bring Panel"
+Title.TextScaled = true
+Title.Parent = Main
+
+local Search = Instance.new("TextBox")
+Search.Size = UDim2.new(1,-20,0,35)
+Search.Position = UDim2.new(0,10,0,50)
+Search.BackgroundColor3 = Color3.fromRGB(45,45,45)
+Search.TextColor3 = Color3.new(1,1,1)
+Search.PlaceholderText = "Search player..."
+Search.Parent = Main
+
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Size = UDim2.new(1,-20,1,-100)
+Scroll.Position = UDim2.new(0,10,0,95)
+Scroll.CanvasSize = UDim2.new(0,0,0,0)
+Scroll.ScrollBarThickness = 6
+Scroll.BackgroundColor3 = Color3.fromRGB(32,32,32)
+Scroll.BorderSizePixel = 0
+Scroll.Parent = Main
+
+local function createEntry(plr)
+    local Entry = Instance.new("Frame")
+    Entry.Size = UDim2.new(1,0,0,70)
+    Entry.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    Entry.BorderSizePixel = 0
+
+    local Img = Instance.new("ImageLabel")
+    Img.Size = UDim2.new(0,55,0,55)
+    Img.Position = UDim2.new(0,7,0,7)
+    Img.BackgroundTransparency = 1
+    Img.Image = Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+    Img.Parent = Entry
+
+    local Name = Instance.new("TextLabel")
+    Name.Size = UDim2.new(1,-140,1,0)
+    Name.Position = UDim2.new(0,70,0,0)
+    Name.BackgroundTransparency = 1
+    Name.TextColor3 = Color3.new(1,1,1)
+    Name.TextXAlignment = Enum.TextXAlignment.Left
+    Name.Text = plr.DisplayName.."  ["..plr.Name.."]"
+    Name.Parent = Entry
+
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(0,65,0,40)
+    Btn.Position = UDim2.new(1,-75,0.5,-20)
+    Btn.Text = "Bring"
+    Btn.BackgroundColor3 = Color3.fromRGB(100,20,20)
+    Btn.TextColor3 = Color3.new(1,1,1)
+    Btn.Parent = Entry
+
+    Btn.MouseButton1Click:Connect(function()
+        if plr.Character and LocalPlayer.Character then
+            local hrp1 = plr.Character:FindFirstChild("HumanoidRootPart")
+            local hrp2 = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if hrp1 and hrp2 then
+                hrp1.CFrame = hrp2.CFrame + Vector3.new(0,3,0)
+            end
+        end
+    end)
+
+    return Entry
+end
+
+local function updateList()
+    for _, v in ipairs(Scroll:GetChildren()) do
+        if v:IsA("Frame") then v:Destroy() end
+    end
+
+    local y = 0
+    local text = Search.Text:lower()
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            local dn = plr.DisplayName:lower()
+            local un = plr.Name:lower()
+            if dn:find(text) or un:find(text) then
+                local entry = createEntry(plr)
+                entry.Position = UDim2.new(0,0,0,y)
+                entry.Parent = Scroll
+                y += 75
+            end
+        end
+    end
+
+    Scroll.CanvasSize = UDim2.new(0,0,0,y)
+end
+
+Search:GetPropertyChangedSignal("Text"):Connect(updateList)
+Players.PlayerAdded:Connect(updateList)
+Players.PlayerRemoving:Connect(updateList)
+
+while task.wait(1) do
+    updateList()
+end
