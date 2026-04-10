@@ -617,6 +617,62 @@ task.spawn(function()
 	end
 end)
 
+-- ── JUMP ASSIST ──
+task.spawn(function()
+	local wasInAir = false
+	while true do
+		twait()
+		if not jumpEnabled or not target or bringing then
+			wasInAir = false
+			continue
+		end
+
+		local c = lp.Character
+		local c1 = target and target.Character
+		if not (c and c1) then continue end
+		if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then continue end
+		local hrp = gp(c, "HumanoidRootPart", "BasePart")
+		local hrp1 = gp(c1, "HumanoidRootPart", "BasePart")
+		local hum1 = gp(c1, "Humanoid", "Humanoid")
+		if not (hrp and hrp1 and hum1) then continue end
+
+		local inAir = not hrp1:IsGrounded()
+
+		-- detect jump start (was grounded, now in air)
+		if inAir and not wasInAir then
+			task.spawn(function()
+				-- snap under their feet immediately
+				local footY = hrp1.Position.Y - hrp1.Size.Y / 2
+				local basePos = v3(hrp1.Position.X, footY - 1, hrp1.Position.Z)
+				hrp.CFrame = cf(basePos)
+				hrp.Velocity = v3_0
+				hrp.RotVelocity = v3_0
+
+				-- tiny settle delay so we are physically under them
+				twait(0.02)
+
+				-- flick upward with power
+				hrp.Velocity = v3(0, jumpPower, 0)
+				hrp.RotVelocity = v3_0
+
+				-- follow them up for a short window so the push stays connected
+				local t = 0
+				while t < 0.15 do
+					twait()
+					t = t + task.wait()
+					if not hrp1 or not hrp then break end
+					local fp = hrp1.Position.Y - hrp1.Size.Y / 2
+					hrp.CFrame = cf(v3(hrp1.Position.X, fp - 0.5, hrp1.Position.Z))
+					hrp.Velocity = v3(0, jumpPower, 0)
+					hrp.RotVelocity = v3_0
+				end
+			end)
+		end
+
+		wasInAir = inAir
+	end
+end)
+
 -- close / open
 closeBtn.MouseButton1Click:Connect(function()
 	win.Visible=false openTab.Visible=true
