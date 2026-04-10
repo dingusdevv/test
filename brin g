@@ -87,10 +87,10 @@ local openTab=mk("TextButton",{
 },gui)
 corner(openTab,4) stroke(openTab)
 
--- Main window
+-- Main window (taller to fit float row)
 local win=mk("Frame",{
 	AnchorPoint=v2(0.5,0.5),Position=u2(0.5,0,0.5,0),
-	Size=u2(0,540,0,390),BackgroundColor3=C.bg,BorderSizePixel=0,
+	Size=u2(0,540,0,420),BackgroundColor3=C.bg,BorderSizePixel=0,
 },gui)
 corner(win,8) stroke(win)
 
@@ -182,7 +182,7 @@ end
 
 -- Speed assist checkbox + speed +/-
 local speedRow=mk("Frame",{
-	Position=u2(0,0,1,-150),Size=u2(0,220,0,26),
+	Position=u2(0,0,1,-178),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 local checkbox=mk("TextButton",{
@@ -202,7 +202,7 @@ mk("TextLabel",{
 
 -- Speed power row
 local speedPowerRow=mk("Frame",{
-	Position=u2(0,0,1,-122),Size=u2(0,220,0,18),
+	Position=u2(0,0,1,-150),Size=u2(0,220,0,18),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 mk("TextLabel",{
@@ -230,7 +230,7 @@ corner(spPlusBtn,4) stroke(spPlusBtn)
 
 -- Jump assist checkbox
 local jumpRow=mk("Frame",{
-	Position=u2(0,0,1,-100),Size=u2(0,220,0,26),
+	Position=u2(0,0,1,-128),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 local jumpCheckbox=mk("TextButton",{
@@ -250,7 +250,7 @@ mk("TextLabel",{
 
 -- Jump power row
 local powerRow=mk("Frame",{
-	Position=u2(0,0,1,-72),Size=u2(0,220,0,18),
+	Position=u2(0,0,1,-100),Size=u2(0,220,0,18),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 mk("TextLabel",{
@@ -276,6 +276,26 @@ local plusBtn=mk("TextButton",{
 },powerRow)
 corner(plusBtn,4) stroke(plusBtn)
 
+-- ── FLOAT checkbox (new) ──
+local floatRow=mk("Frame",{
+	Position=u2(0,0,1,-78),Size=u2(0,220,0,26),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},content)
+local floatCheckbox=mk("TextButton",{
+	Size=u2(0,18,0,18),Position=u2(0,0,0.5,-9),
+	BackgroundColor3=C.surface,Text="",BorderSizePixel=0,
+},floatRow)
+corner(floatCheckbox,4) stroke(floatCheckbox)
+local floatCheckmark=mk("TextLabel",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	Text="✓",TextColor3=C.accent,TextSize=14,Font=en.Font.GothamBold,Visible=false,
+},floatCheckbox)
+mk("TextLabel",{
+	Position=u2(0,24,0,0),Size=u2(1,-24,1,0),BackgroundTransparency=1,
+	Text="Float (stay under target)",TextColor3=C.muted,TextSize=12,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},floatRow)
+
 -- Bring button
 local bringBtn=mk("TextButton",{
 	Position=u2(0,0,1,-48),Size=u2(0,190,0,38),
@@ -294,9 +314,10 @@ local statusLabel=mk("TextLabel",{
 
 -- State
 local speedEnabled=false
-local speedPower=75 -- mirrors maxspeed default
+local speedPower=75
 local jumpEnabled=false
 local jumpPower=100
+local floatEnabled=false
 
 checkbox.MouseButton1Click:Connect(function()
 	speedEnabled=not speedEnabled
@@ -325,6 +346,11 @@ end)
 plusBtn.MouseButton1Click:Connect(function()
 	jumpPower=math.min(500,jumpPower+10)
 	powerLabel.Text=tostring(jumpPower)
+end)
+floatCheckbox.MouseButton1Click:Connect(function()
+	floatEnabled=not floatEnabled
+	floatCheckmark.Visible=floatEnabled
+	floatCheckbox.BackgroundColor3=floatEnabled and C.accentDim or C.surface
 end)
 
 -- Draggable
@@ -572,7 +598,6 @@ task.spawn(function()
 					local walkspeed=horizV.Magnitude
 
 					if walkspeed<=0.5 then
-						-- park cleanly under feet while stopped
 						local footY=hrp1.Position.Y-hrp1.Size.Y/2
 						hrp.CFrame=cf(v3(hrp1.Position.X,footY,hrp1.Position.Z))*off
 						hrp.Velocity=v3_0
@@ -600,7 +625,6 @@ task.spawn(function()
 
 						local newDir=hv2.Unit
 
-						-- reset on turn
 						if dir:Dot(newDir)<0.85 then
 							vel=0
 							way=0
@@ -613,7 +637,6 @@ task.spawn(function()
 						local basePos=v3(hrp1.Position.X,footY,hrp1.Position.Z)
 						local toP=basePos+dir*50
 
-						-- clamp: if more than 4 studs ahead in walk dir, reset
 						local myHorizPos=v3(hrp.Position.X,footY,hrp.Position.Z)
 						local ahead=(myHorizPos-basePos):Dot(dir)
 						if ahead>75 then
@@ -658,15 +681,16 @@ task.spawn(function()
 	end
 end)
 
--- ── JUMP ASSIST ──
+-- ── JUMP ASSIST (rewritten) ──
+-- Tracks the target through the full jump arc by mirroring their Y each frame.
+-- Works alongside speed assist since it only touches Y velocity/position.
+local jumpActive=false  -- true while we are inside a tracked jump
+
 task.spawn(function()
-	local lastY=nil
-	local jumpFired=false
 	while true do
 		twait()
 		if not jumpEnabled or not target or bringing then
-			lastY=nil
-			jumpFired=false
+			jumpActive=false
 			continue
 		end
 
@@ -678,44 +702,69 @@ task.spawn(function()
 		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
 		if not (hrp and hrp1) then continue end
 
-		local currentY=hrp1.Position.Y
-
-		-- detect upward movement start = jump
-		local jumping=hrp1.Velocity.Y>2
-
-		if jumping and not jumpFired then
-			jumpFired=true
+		-- Detect jump start: target moving upward and we haven't started a track yet
+		if not jumpActive and hrp1.Velocity.Y > 1 then
+			jumpActive=true
 			task.spawn(function()
-				-- snap directly under their feet
-				local footY=hrp1.Position.Y-hrp1.Size.Y/2
-				hrp.CFrame=cf(v3(hrp1.Position.X,footY-0.5,hrp1.Position.Z))
-				hrp.Velocity=v3_0
-				hrp.RotVelocity=v3_0
+				-- Track continuously until they land (velocity Y goes negative and near ground)
+				while jumpEnabled and target and not bringing do
+					local ch=lp.Character
+					local ch1=target and target.Character
+					if not (ch and ch1) then break end
+					local r=gp(ch,"HumanoidRootPart","BasePart")
+					local r1=gp(ch1,"HumanoidRootPart","BasePart")
+					if not (r and r1) then break end
 
-				-- flick up
-				hrp.Velocity=v3(0,jumpPower,0)
-				hrp.RotVelocity=v3_0
+					-- Place us exactly under their feet every frame
+					local footY=r1.Position.Y - r1.Size.Y/2 - 0.1
+					local tx=r1.Position.X
+					local tz=r1.Position.Z
 
-				-- sustain upward push for 0.12s so it stays under them through lag
-				local t=0
-				while t<0.12 do
-					local dt=twait()
-					t=t+dt
-					if not hrp1 or not hrp then break end
-					local fp=hrp1.Position.Y-hrp1.Size.Y/2
-					hrp.CFrame=cf(v3(hrp1.Position.X,fp-0.5,hrp1.Position.Z))
-					hrp.Velocity=v3(0,jumpPower,0)
-					hrp.RotVelocity=v3_0
+					-- Mirror their vertical velocity so we keep up through lag
+					local targetVY=r1.Velocity.Y
+					r.CFrame=cf(v3(tx, footY, tz))
+					r.Velocity=v3(r.Velocity.X, targetVY, r.Velocity.Z)
+					r.RotVelocity=v3_0
+
+					twait()
+
+					-- Exit once they've peaked and landed (Y velocity clearly negative)
+					if r1.Velocity.Y < -2 then
+						-- Give a couple more frames to catch the landing
+						twait()
+						twait()
+						break
+					end
 				end
+				jumpActive=false
 			end)
 		end
+	end
+end)
 
-		-- reset once they land (velocity Y near 0 or negative after a jump)
-		if jumpFired and hrp1.Velocity.Y<=-1 then
-			jumpFired=false
-		end
+-- ── FLOAT (new) ──
+-- Continuously snaps local HRP to just below the target's feet.
+-- Yields while jump assist is active so they don't fight each other.
+task.spawn(function()
+	while true do
+		twait()
+		if not floatEnabled or not target or bringing then continue end
 
-		lastY=currentY
+		-- Let jump assist own the frame while a jump is tracked
+		if jumpActive then continue end
+
+		local c=lp.Character
+		local c1=target and target.Character
+		if not (c and c1) then continue end
+		if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then continue end
+		local hrp=gp(c,"HumanoidRootPart","BasePart")
+		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
+		if not (hrp and hrp1) then continue end
+
+		local footY=hrp1.Position.Y - hrp1.Size.Y/2 - 0.1
+		hrp.CFrame=cf(v3(hrp1.Position.X, footY, hrp1.Position.Z))
+		hrp.Velocity=hrp1.Velocity  -- inherit target velocity so we don't fall behind
+		hrp.RotVelocity=v3_0
 	end
 end)
 
