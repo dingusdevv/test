@@ -90,7 +90,7 @@ corner(openTab,4) stroke(openTab)
 -- Main window
 local win=mk("Frame",{
 	AnchorPoint=v2(0.5,0.5),Position=u2(0.5,0,0.5,0),
-	Size=u2(0,540,0,310),BackgroundColor3=C.bg,BorderSizePixel=0,
+	Size=u2(0,540,0,370),BackgroundColor3=C.bg,BorderSizePixel=0,
 },gui)
 corner(win,8) stroke(win)
 
@@ -182,7 +182,7 @@ end
 
 -- Speed assist checkbox
 local speedRow=mk("Frame",{
-	Position=u2(0,0,1,-80),Size=u2(0,220,0,26),
+	Position=u2(0,0,1,-130),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 local checkbox=mk("TextButton",{
@@ -207,75 +207,74 @@ checkbox.MouseButton1Click:Connect(function()
 	checkbox.BackgroundColor3=speedEnabled and C.accentDim or C.surface
 end)
 
-
--- Jump assist checkbox (add after speedRow block, before bringBtn)
-local jumpRow = mk("Frame", {
-	Position = u2(0,0,1,-50),Size = u2(0,220,0,26),
-	BackgroundTransparency = 1, BorderSizePixel = 0,
-}, content)
-local jumpCheckbox = mk("TextButton", {
-	Size = u2(0,18,0,18), Position = u2(0,0,0.5,-9),
-	BackgroundColor3 = C.surface, Text = "", BorderSizePixel = 0,
-}, jumpRow)
-corner(jumpCheckbox, 4) stroke(jumpCheckbox)
-local jumpCheckmark = mk("TextLabel", {
-	Size = u2(1,0,1,0), BackgroundTransparency = 1,
-	Text = "✓", TextColor3 = C.accent, TextSize = 14, Font = en.Font.GothamBold, Visible = false,
-}, jumpCheckbox)
-mk("TextLabel", {
-	Position = u2(0,24,0,0), Size = u2(1,-24,1,0), BackgroundTransparency = 1,
-	Text = "Jump assist", TextColor3 = C.muted, TextSize = 12, Font = en.Font.Gotham,
-	TextXAlignment = en.TextXAlignment.Left,
-}, jumpRow)
+-- Jump assist checkbox
+local jumpRow=mk("Frame",{
+	Position=u2(0,0,1,-100),Size=u2(0,220,0,26),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},content)
+local jumpCheckbox=mk("TextButton",{
+	Size=u2(0,18,0,18),Position=u2(0,0,0.5,-9),
+	BackgroundColor3=C.surface,Text="",BorderSizePixel=0,
+},jumpRow)
+corner(jumpCheckbox,4) stroke(jumpCheckbox)
+local jumpCheckmark=mk("TextLabel",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	Text="✓",TextColor3=C.accent,TextSize=14,Font=en.Font.GothamBold,Visible=false,
+},jumpCheckbox)
+mk("TextLabel",{
+	Position=u2(0,24,0,0),Size=u2(1,-24,1,0),BackgroundTransparency=1,
+	Text="Jump assist",TextColor3=C.muted,TextSize=12,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},jumpRow)
 
 -- Power control row
-local powerRow = mk("Frame", {
-	Position = u2(0,0,1,-20), Size = u2(0,220,0,18),
-	BackgroundTransparency = 1, BorderSizePixel = 0,
-}, content)
-mk("TextLabel", {
-	Size = u2(0,60,1,0), BackgroundTransparency = 1,
-	Text = "JP Power:", TextColor3 = C.muted, TextSize = 11, Font = en.Font.Gotham,
-	TextXAlignment = en.TextXAlignment.Left,
-}, powerRow)
-local minusBtn = mk("TextButton", {
-	Position = u2(0,62,0.5,-8), Size = u2(0,16,0,16),
-	BackgroundColor3 = C.surface, Text = "-", TextColor3 = C.text,
-	TextSize = 13, Font = en.Font.GothamBold, BorderSizePixel = 0,
-}, powerRow)
-corner(minusBtn, 4) stroke(minusBtn)
-local powerLabel = mk("TextLabel", {
-	Position = u2(0,82,0,0), Size = u2(0,30,1,0), BackgroundTransparency = 1,
-	Text = "100", TextColor3 = C.text, TextSize = 11, Font = en.Font.GothamBold,
-	TextXAlignment = en.TextXAlignment.Center,
-}, powerRow)
-local plusBtn = mk("TextButton", {
-	Position = u2(0,114,0.5,-8), Size = u2(0,16,0,16),
-	BackgroundColor3 = C.surface, Text = "+", TextColor3 = C.text,
-	TextSize = 13, Font = en.Font.GothamBold, BorderSizePixel = 0,
-}, powerRow)
-corner(plusBtn, 4) stroke(plusBtn)
+local powerRow=mk("Frame",{
+	Position=u2(0,0,1,-72),Size=u2(0,220,0,18),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},content)
+mk("TextLabel",{
+	Size=u2(0,60,1,0),BackgroundTransparency=1,
+	Text="JP Power:",TextColor3=C.muted,TextSize=11,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},powerRow)
+local minusBtn=mk("TextButton",{
+	Position=u2(0,62,0.5,-8),Size=u2(0,16,0,16),
+	BackgroundColor3=C.surface,Text="-",TextColor3=C.text,
+	TextSize=13,Font=en.Font.GothamBold,BorderSizePixel=0,
+},powerRow)
+corner(minusBtn,4) stroke(minusBtn)
+local powerLabel=mk("TextLabel",{
+	Position=u2(0,82,0,0),Size=u2(0,30,1,0),BackgroundTransparency=1,
+	Text="100",TextColor3=C.text,TextSize=11,Font=en.Font.GothamBold,
+	TextXAlignment=en.TextXAlignment.Center,
+},powerRow)
+local plusBtn=mk("TextButton",{
+	Position=u2(0,114,0.5,-8),Size=u2(0,16,0,16),
+	BackgroundColor3=C.surface,Text="+",TextColor3=C.text,
+	TextSize=13,Font=en.Font.GothamBold,BorderSizePixel=0,
+},powerRow)
+corner(plusBtn,4) stroke(plusBtn)
 
-local jumpEnabled = false
-local jumpPower = 100
+local jumpEnabled=false
+local jumpPower=100
 
 jumpCheckbox.MouseButton1Click:Connect(function()
-	jumpEnabled = not jumpEnabled
-	jumpCheckmark.Visible = jumpEnabled
-	jumpCheckbox.BackgroundColor3 = jumpEnabled and C.accentDim or C.surface
+	jumpEnabled=not jumpEnabled
+	jumpCheckmark.Visible=jumpEnabled
+	jumpCheckbox.BackgroundColor3=jumpEnabled and C.accentDim or C.surface
 end)
 minusBtn.MouseButton1Click:Connect(function()
-	jumpPower = math.max(10, jumpPower - 10)
-	powerLabel.Text = tostring(jumpPower)
+	jumpPower=math.max(10,jumpPower-10)
+	powerLabel.Text=tostring(jumpPower)
 end)
 plusBtn.MouseButton1Click:Connect(function()
-	jumpPower = math.min(500, jumpPower + 10)
-	powerLabel.Text = tostring(jumpPower)
+	jumpPower=math.min(500,jumpPower+10)
+	powerLabel.Text=tostring(jumpPower)
 end)
 
 -- Bring button
 local bringBtn=mk("TextButton",{
-	Position=u2(0,0,1,-44),Size=u2(0,190,0,38),
+	Position=u2(0,0,1,-48),Size=u2(0,190,0,38),
 	BackgroundColor3=C.btn,BorderSizePixel=0,
 	Text="bring",TextColor3=C.btnText,TextSize=15,Font=en.Font.Gotham,
 },content)
@@ -289,7 +288,7 @@ local statusLabel=mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },content)
 
--- ── Draggable (original) ──
+-- Draggable
 local function Draggable(window,obj)
 	local MB1enum=en.UserInputType.MouseButton1
 	local TOUCHenum=en.UserInputType.Touch
@@ -355,7 +354,7 @@ local function Draggable(window,obj)
 end
 Draggable(win,titleBar)
 
--- ── Players ──
+-- Players
 local others={}
 for _,v in pairs(plrs:GetPlayers()) do if v~=lp then others[v]=true end end
 plrs.PlayerAdded:Connect(function(p) if p~=lp then others[p]=true end end)
@@ -433,7 +432,7 @@ plrs.PlayerRemoving:Connect(function(plr)
 	if plr==target then target=nil updateCard(nil) statusLabel.Text="player left" end
 end)
 
--- ── BRING (original, untouched) ──
+-- ── BRING ──
 local bringing=false
 
 bringBtn.MouseButton1Click:Connect(function()
@@ -512,164 +511,157 @@ bringBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ── SPEED ASSIST ──
-local assisting = false
+local assisting=false
 
 task.spawn(function()
 	while true do
 		twait()
 		if speedEnabled and target and not bringing and not assisting then
-			assisting = true
+			assisting=true
 			task.spawn(function()
 				while speedEnabled and target and not bringing do
-					local c = lp.Character
-					local c1 = target and target.Character
+					local c=lp.Character
+					local c1=target and target.Character
 					if not (c and c1) then twait() continue end
 					if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then twait() continue end
-					local hrp = gp(c, "HumanoidRootPart", "BasePart")
-					local hrp1 = gp(c1, "HumanoidRootPart", "BasePart")
+					local hrp=gp(c,"HumanoidRootPart","BasePart")
+					local hrp1=gp(c1,"HumanoidRootPart","BasePart")
 					if not (hrp and hrp1) then twait() continue end
 
-					local tv = hrp1.Velocity
-					local horizV = v3(tv.X, 0, tv.Z)
-					local walkspeed = horizV.Magnitude
+					local tv=hrp1.Velocity
+					local horizV=v3(tv.X,0,tv.Z)
+					local walkspeed=horizV.Magnitude
 
-					if walkspeed <= 0.5 then
+					if walkspeed<=0.5 then
 						twait()
 						continue
 					end
 
-					local dir = horizV.Unit
+					local dir=horizV.Unit
+					local footY=hrp1.Position.Y-hrp1.Size.Y/2
+					local vel=0
+					local way=0
+					local reachedmaxspeed=false
+					local sine=osclock()
+					local lastsine=sine
 
-					local footY = hrp1.Position.Y - hrp1.Size.Y / 2
+					while bringing==false and speedEnabled and target do
+						sine=osclock()
+						local dt=sine-lastsine
+						lastsine=sine
 
-					local vel = 0
-					local way = 0
-					local reachedmaxspeed = false
-					local sine = osclock()
-					local lastsine = sine
+						local tv2=hrp1.Velocity
+						local hv2=v3(tv2.X,0,tv2.Z)
+						if hv2.Magnitude<=0.5 then break end
 
-					while bringing == false and speedEnabled and target do
-						sine = osclock()
-						local dt = sine - lastsine
-						lastsine = sine
+						local newDir=hv2.Unit
 
-						local tv2 = hrp1.Velocity
-						local hv2 = v3(tv2.X, 0, tv2.Z)
-						if hv2.Magnitude <= 0.5 then break end
-
-						local newDir = hv2.Unit
-
-						-- if they turned (~30 deg threshold), reset cycle
-						if dir:Dot(newDir) < 0.85 then
-							vel = 0
-							way = 0
-							reachedmaxspeed = false
+						-- reset cycle on turn
+						if dir:Dot(newDir)<0.85 then
+							vel=0
+							way=0
+							reachedmaxspeed=false
 						end
 
-						dir = newDir
-						footY = hrp1.Position.Y - hrp1.Size.Y / 2
+						dir=newDir
+						footY=hrp1.Position.Y-hrp1.Size.Y/2
 
-						local basePos = v3(hrp1.Position.X, footY, hrp1.Position.Z)
-						local toP = basePos + dir * 50
+						local basePos=v3(hrp1.Position.X,footY,hrp1.Position.Z)
+						local toP=basePos+dir*50
 
-						-- if my hrp is more than 4 studs ahead of target in walk dir, reset
-						local myHorizPos = v3(hrp.Position.X, footY, hrp.Position.Z)
-						local ahead = (myHorizPos - basePos):Dot(dir)
-						if ahead > 20 then
-							vel = 0
-							way = 0
-							reachedmaxspeed = false
+						-- reset if more than 24 studs ahead
+						local myHorizPos=v3(hrp.Position.X,footY,hrp.Position.Z)
+						local ahead=(myHorizPos-basePos):Dot(dir)
+						if ahead>24 then
+							vel=0
+							way=0
+							reachedmaxspeed=false
 						end
 
 						if reachedmaxspeed then
-							if (basePos - v3(hrp.Position.X, footY, hrp.Position.Z)).Magnitude < reachedmaxspeed then
-								vel = vel - dt * speeding
-								if vel < 0 then break end
+							if (basePos-v3(hrp.Position.X,footY,hrp.Position.Z)).Magnitude<reachedmaxspeed then
+								vel=vel-dt*speeding
+								if vel<0 then break end
 							end
 						else
-							vel = vel + dt * speeding
-							if vel > maxspeed then
-								reachedmaxspeed = way
-								vel = maxspeed
+							vel=vel+dt*speeding
+							if vel>maxspeed then
+								reachedmaxspeed=way
+								vel=maxspeed
 							end
 						end
 
-						way = way + vel * dt
+						way=way+vel*dt
 
-						local newPos = v3(basePos.X + dir.X * way, footY, basePos.Z + dir.Z * way)
-						hrp.CFrame = cf(newPos, toP) * off
-						hrp.Velocity = dir * (vel + 1)
-						hrp.RotVelocity = v3_0
+						local newPos=v3(basePos.X+dir.X*way,footY,basePos.Z+dir.Z*way)
+						hrp.CFrame=cf(newPos,toP)*off
+						hrp.Velocity=dir*(vel+1)
+						hrp.RotVelocity=v3_0
 
 						twait()
 					end
 
-					local footYFinal = hrp1.Position.Y - hrp1.Size.Y / 2
-					hrp.CFrame = cf(v3(hrp1.Position.X, footYFinal, hrp1.Position.Z)) * off
-					hrp.Velocity = v3_0
-					hrp.RotVelocity = v3_0
+					local footYFinal=hrp1.Position.Y-hrp1.Size.Y/2
+					hrp.CFrame=cf(v3(hrp1.Position.X,footYFinal,hrp1.Position.Z))*off
+					hrp.Velocity=v3_0
+					hrp.RotVelocity=v3_0
 				end
-				assisting = false
+				assisting=false
 			end)
 		elseif (not speedEnabled or not target or bringing) and assisting then
-			assisting = false
+			assisting=false
 		end
 	end
 end)
 
 -- ── JUMP ASSIST ──
 task.spawn(function()
-	local wasInAir = false
+	local wasInAir=false
 	while true do
 		twait()
 		if not jumpEnabled or not target or bringing then
-			wasInAir = false
+			wasInAir=false
 			continue
 		end
 
-		local c = lp.Character
-		local c1 = target and target.Character
+		local c=lp.Character
+		local c1=target and target.Character
 		if not (c and c1) then continue end
 		if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then continue end
-		local hrp = gp(c, "HumanoidRootPart", "BasePart")
-		local hrp1 = gp(c1, "HumanoidRootPart", "BasePart")
-		local hum1 = gp(c1, "Humanoid", "Humanoid")
+		local hrp=gp(c,"HumanoidRootPart","BasePart")
+		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
+		local hum1=gp(c1,"Humanoid","Humanoid")
 		if not (hrp and hrp1 and hum1) then continue end
 
-		local inAir = not hrp1:IsGrounded()
+		local inAir=not hrp1:IsGrounded()
 
-		-- detect jump start (was grounded, now in air)
 		if inAir and not wasInAir then
 			task.spawn(function()
-				-- snap under their feet immediately
-				local footY = hrp1.Position.Y - hrp1.Size.Y / 2
-				local basePos = v3(hrp1.Position.X, footY - 1, hrp1.Position.Z)
-				hrp.CFrame = cf(basePos)
-				hrp.Velocity = v3_0
-				hrp.RotVelocity = v3_0
+				local footY=hrp1.Position.Y-hrp1.Size.Y/2
+				local basePos=v3(hrp1.Position.X,footY-1,hrp1.Position.Z)
+				hrp.CFrame=cf(basePos)
+				hrp.Velocity=v3_0
+				hrp.RotVelocity=v3_0
 
-				-- tiny settle delay so we are physically under them
 				twait(0.02)
 
-				-- flick upward with power
-				hrp.Velocity = v3(0, jumpPower, 0)
-				hrp.RotVelocity = v3_0
+				hrp.Velocity=v3(0,jumpPower,0)
+				hrp.RotVelocity=v3_0
 
-				-- follow them up for a short window so the push stays connected
-				local t = 0
-				while t < 0.15 do
-					twait()
-					t = t + task.wait()
+				local t=0
+				while t<0.15 do
+					local dt=twait()
+					t=t+dt
 					if not hrp1 or not hrp then break end
-					local fp = hrp1.Position.Y - hrp1.Size.Y / 2
-					hrp.CFrame = cf(v3(hrp1.Position.X, fp - 0.5, hrp1.Position.Z))
-					hrp.Velocity = v3(0, jumpPower, 0)
-					hrp.RotVelocity = v3_0
+					local fp=hrp1.Position.Y-hrp1.Size.Y/2
+					hrp.CFrame=cf(v3(hrp1.Position.X,fp-0.5,hrp1.Position.Z))
+					hrp.Velocity=v3(0,jumpPower,0)
+					hrp.RotVelocity=v3_0
 				end
 			end)
 		end
 
-		wasInAir = inAir
+		wasInAir=inAir
 	end
 end)
 
@@ -684,7 +676,8 @@ closeBtn.MouseButton1Click:Connect(function()
 	end
 end)
 openTab.MouseButton1Click:Connect(function()
-	win.Visible=true openTab.Visible=false end)
+	win.Visible=true openTab.Visible=false
+end)
 
 local ok=pcall(function() gui.Parent=game:FindFirstChildOfClass("CoreGui") end)
 if not ok then gui.Parent=lp:FindFirstChildOfClass("PlayerGui") end
