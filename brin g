@@ -207,6 +207,72 @@ checkbox.MouseButton1Click:Connect(function()
 	checkbox.BackgroundColor3=speedEnabled and C.accentDim or C.surface
 end)
 
+
+-- Jump assist checkbox (add after speedRow block, before bringBtn)
+local jumpRow = mk("Frame", {
+	Position = u2(0,0,1,-50),Size = u2(0,220,0,26),
+	BackgroundTransparency = 1, BorderSizePixel = 0,
+}, content)
+local jumpCheckbox = mk("TextButton", {
+	Size = u2(0,18,0,18), Position = u2(0,0,0.5,-9),
+	BackgroundColor3 = C.surface, Text = "", BorderSizePixel = 0,
+}, jumpRow)
+corner(jumpCheckbox, 4) stroke(jumpCheckbox)
+local jumpCheckmark = mk("TextLabel", {
+	Size = u2(1,0,1,0), BackgroundTransparency = 1,
+	Text = "✓", TextColor3 = C.accent, TextSize = 14, Font = en.Font.GothamBold, Visible = false,
+}, jumpCheckbox)
+mk("TextLabel", {
+	Position = u2(0,24,0,0), Size = u2(1,-24,1,0), BackgroundTransparency = 1,
+	Text = "Jump assist", TextColor3 = C.muted, TextSize = 12, Font = en.Font.Gotham,
+	TextXAlignment = en.TextXAlignment.Left,
+}, jumpRow)
+
+-- Power control row
+local powerRow = mk("Frame", {
+	Position = u2(0,0,1,-20), Size = u2(0,220,0,18),
+	BackgroundTransparency = 1, BorderSizePixel = 0,
+}, content)
+mk("TextLabel", {
+	Size = u2(0,60,1,0), BackgroundTransparency = 1,
+	Text = "JP Power:", TextColor3 = C.muted, TextSize = 11, Font = en.Font.Gotham,
+	TextXAlignment = en.TextXAlignment.Left,
+}, powerRow)
+local minusBtn = mk("TextButton", {
+	Position = u2(0,62,0.5,-8), Size = u2(0,16,0,16),
+	BackgroundColor3 = C.surface, Text = "-", TextColor3 = C.text,
+	TextSize = 13, Font = en.Font.GothamBold, BorderSizePixel = 0,
+}, powerRow)
+corner(minusBtn, 4) stroke(minusBtn)
+local powerLabel = mk("TextLabel", {
+	Position = u2(0,82,0,0), Size = u2(0,30,1,0), BackgroundTransparency = 1,
+	Text = "100", TextColor3 = C.text, TextSize = 11, Font = en.Font.GothamBold,
+	TextXAlignment = en.TextXAlignment.Center,
+}, powerRow)
+local plusBtn = mk("TextButton", {
+	Position = u2(0,114,0.5,-8), Size = u2(0,16,0,16),
+	BackgroundColor3 = C.surface, Text = "+", TextColor3 = C.text,
+	TextSize = 13, Font = en.Font.GothamBold, BorderSizePixel = 0,
+}, powerRow)
+corner(plusBtn, 4) stroke(plusBtn)
+
+local jumpEnabled = false
+local jumpPower = 100
+
+jumpCheckbox.MouseButton1Click:Connect(function()
+	jumpEnabled = not jumpEnabled
+	jumpCheckmark.Visible = jumpEnabled
+	jumpCheckbox.BackgroundColor3 = jumpEnabled and C.accentDim or C.surface
+end)
+minusBtn.MouseButton1Click:Connect(function()
+	jumpPower = math.max(10, jumpPower - 10)
+	powerLabel.Text = tostring(jumpPower)
+end)
+plusBtn.MouseButton1Click:Connect(function()
+	jumpPower = math.min(500, jumpPower + 10)
+	powerLabel.Text = tostring(jumpPower)
+end)
+
 -- Bring button
 local bringBtn=mk("TextButton",{
 	Position=u2(0,0,1,-44),Size=u2(0,190,0,38),
