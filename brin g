@@ -12,6 +12,581 @@ local v3_010=v3(0,1,0)
 local twait=task.wait
 local osclock=os.clock
 local slower=string.lower
+local ssub=string.sub
+local sc,mr=string.char,math.random
+
+local BRING_SPEED=32
+local BRING_MAX=75
+local offAngle=angles(-1.5707963267948966,0,0)
+
+local function gp(p,n,cl)
+	if typeof(p)~="Instance" then return nil end
+	for _,v in ipairs(p:GetChildren()) do
+		if v.Name==n and v:IsA(cl) then return v end
+	end
+	return nil
+end
+
+local function rstr(l)
+	l=l or mr(8,15)
+	local s=""
+	for _=1,l do s=s..(mr(1,2)==1 and sc(mr(65,90)) or sc(mr(97,122))) end
+	return s
+end
+
+local new=Instance.new
+local v2=Vector2.new
+local c3=Color3.fromRGB
+local u2=UDim2.new
+local en=Enum
+
+local C={
+	bg=c3(30,30,30),
+	sidebar=c3(22,22,22),
+	panel=c3(38,38,38),
+	surface=c3(48,48,48),
+	btn=c3(240,240,240),
+	btnText=c3(60,60,60),
+	border=c3(60,60,60),
+	text=c3(230,230,230),
+	muted=c3(130,130,130),
+	accent=c3(72,199,142),
+	accentDim=c3(20,55,38),
+	accentBorder=c3(45,110,75),
+	red=c3(255,80,80),
+}
+
+local function mk(cls,props,parent)
+	local o=new(cls)
+	for k,v in pairs(props) do o[k]=v end
+	if parent then o.Parent=parent end
+	return o
+end
+local function corner(p,r) local c=new("UICorner") c.CornerRadius=UDim.new(0,r or 6) c.Parent=p return c end
+local function pad(p,t,ri,b,l) local u=new("UIPadding") u.PaddingTop=UDim.new(0,t or 0) u.PaddingRight=UDim.new(0,ri or 0) u.PaddingBottom=UDim.new(0,b or 0) u.PaddingLeft=UDim.new(0,l or 0) u.Parent=p return u end
+local function stroke(p,col,th) local s=new("UIStroke") s.Color=col or C.border s.Thickness=th or 1 s.ApplyStrokeMode=en.ApplyStrokeMode.Border s.Parent=p return s end
+
+-- GUI
+local gui=mk("ScreenGui",{Name=rstr(),ResetOnSpawn=false,ZIndexBehavior=en.ZIndexBehavior.Sibling})
+
+-- Edge open button
+local openTab=mk("TextButton",{
+	AnchorPoint=v2(0,0.5),Position=u2(0,0,0.5,0),
+	Size=u2(0,20,0,60),BackgroundColor3=C.sidebar,
+	Text="▶",TextColor3=C.muted,TextSize=10,Font=en.Font.GothamBold,
+	Visible=false,ZIndex=20,
+},gui)
+corner(openTab,4) stroke(openTab,C.border)
+
+-- Main window
+local win=mk("Frame",{
+	AnchorPoint=v2(0.5,0.5),Position=u2(0.5,0,0.5,0),
+	Size=u2(0,540,0,310),
+	BackgroundColor3=C.bg,BorderSizePixel=0,
+},gui)
+corner(win,8) stroke(win,C.border)
+
+-- Title bar
+local titleBar=mk("Frame",{
+	Size=u2(1,0,0,34),BackgroundColor3=C.sidebar,BorderSizePixel=0,
+},win)
+mk("UICorner",{CornerRadius=UDim.new(0,8)},titleBar)
+mk("Frame",{Size=u2(1,0,0.5,0),Position=u2(0,0,0.5,0),BackgroundColor3=C.sidebar,BorderSizePixel=0},titleBar)
+mk("Frame",{Position=u2(0,0,1,-1),Size=u2(1,0,0,1),BackgroundColor3=C.border,BorderSizePixel=0},titleBar)
+
+mk("TextLabel",{
+	Position=u2(0,10,0,0),Size=u2(1,-50,1,0),
+	BackgroundTransparency=1,Text="Admin Panel",
+	TextColor3=C.text,TextSize=13,Font=en.Font.GothamBold,
+	TextXAlignment=en.TextXAlignment.Left,
+},titleBar)
+
+local closeBtn=mk("TextButton",{
+	AnchorPoint=v2(1,0.5),Position=u2(1,-10,0.5,0),
+	Size=u2(0,14,0,14),BackgroundColor3=C.red,
+	Text="",BorderSizePixel=0,
+},titleBar)
+corner(closeBtn,7)
+
+-- Sidebar
+local sidebar=mk("Frame",{
+	Position=u2(0,0,0,34),Size=u2(0,130,1,-34),
+	BackgroundColor3=C.sidebar,BorderSizePixel=0,
+},win)
+mk("Frame",{AnchorPoint=v2(1,0),Position=u2(1,0,0,0),Size=u2(0,1,1,0),BackgroundColor3=C.border,BorderSizePixel=0},sidebar)
+mk("Frame",{AnchorPoint=v2(1,0),Position=u2(1,0,0,0),Size=u2(0,8,1,0),BackgroundColor3=C.sidebar,BorderSizePixel=0},win)
+
+-- Avatar box
+local avatarBox=mk("Frame",{
+	AnchorPoint=v2(0.5,0),Position=u2(0.5,0,0,14),
+	Size=u2(0,90,0,90),BackgroundColor3=C.surface,BorderSizePixel=0,
+},sidebar)
+corner(avatarBox,8) stroke(avatarBox,C.border)
+
+local avatarLetter=mk("TextLabel",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	Text="?",TextColor3=C.muted,TextSize=30,Font=en.Font.GothamBold,
+},avatarBox)
+
+-- Content area
+local content=mk("Frame",{
+	Position=u2(0,130,0,34),Size=u2(1,-130,1,-34),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},win)
+pad(content,14,14,14,14)
+
+-- Name pill / search box
+local nameBtn=mk("Frame",{
+	Position=u2(0,0,0,0),Size=u2(0,220,0,42),
+	BackgroundColor3=C.btn,BorderSizePixel=0,
+},content)
+corner(nameBtn,6) stroke(nameBtn,c3(200,200,200))
+
+local nameBtnLabel=mk("TextLabel",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	Text="Playername",TextColor3=C.muted,TextSize=14,Font=en.Font.Gotham,
+},nameBtn)
+
+local searchBox=mk("TextBox",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	PlaceholderText="",PlaceholderColor3=c3(160,160,160),Text="",
+	TextColor3=C.btnText,TextSize=14,Font=en.Font.Gotham,
+	ClearTextOnFocus=false,BorderSizePixel=0,ZIndex=2,
+},nameBtn)
+pad(searchBox,0,8,0,8)
+
+-- Info rows (hidden until player found)
+local infoBlock=mk("Frame",{
+	Position=u2(0,0,0,52),Size=u2(1,0,0,108),
+	BackgroundTransparency=1,BorderSizePixel=0,
+	Visible=false,
+},content)
+
+local statDefs={"Display","Username","Team","Health","Age","Ping"}
+local statVals={}
+for i2,label in ipairs(statDefs) do
+	local row=mk("Frame",{
+		Position=u2(0,0,0,(i2-1)*18),Size=u2(1,0,0,17),
+		BackgroundTransparency=1,BorderSizePixel=0,
+	},infoBlock)
+	mk("TextLabel",{
+		Size=u2(0,70,1,0),BackgroundTransparency=1,
+		Text=label..":",TextColor3=C.muted,TextSize=12,Font=en.Font.Gotham,
+		TextXAlignment=en.TextXAlignment.Left,
+	},row)
+	statVals[label]=mk("TextLabel",{
+		Position=u2(0,72,0,0),Size=u2(1,-72,1,0),
+		BackgroundTransparency=1,Text="—",
+		TextColor3=C.text,TextSize=12,Font=en.Font.GothamBold,
+		TextXAlignment=en.TextXAlignment.Left,
+	},row)
+end
+
+-- Speed assist checkbox
+local speedRow=mk("Frame",{
+	Position=u2(0,0,1,-80),Size=u2(0,220,0,26),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},content)
+
+local checkbox=mk("TextButton",{
+	Size=u2(0,18,0,18),Position=u2(0,0,0.5,-9),
+	BackgroundColor3=C.surface,Text="",BorderSizePixel=0,
+},speedRow)
+corner(checkbox,4) stroke(checkbox,C.border)
+
+local checkmark=mk("TextLabel",{
+	Size=u2(1,0,1,0),BackgroundTransparency=1,
+	Text="✓",TextColor3=C.accent,TextSize=14,Font=en.Font.GothamBold,
+	Visible=false,
+},checkbox)
+
+mk("TextLabel",{
+	Position=u2(0,24,0,0),Size=u2(1,-24,1,0),
+	BackgroundTransparency=1,Text="Speed assist",
+	TextColor3=C.muted,TextSize=12,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},speedRow)
+
+local speedEnabled=false
+checkbox.MouseButton1Click:Connect(function()
+	speedEnabled=not speedEnabled
+	checkmark.Visible=speedEnabled
+	checkbox.BackgroundColor3=speedEnabled and C.accentDim or C.surface
+end)
+
+-- Bring button
+local bringBtn=mk("TextButton",{
+	Position=u2(0,0,1,-44),Size=u2(0,190,0,38),
+	BackgroundColor3=C.btn,BorderSizePixel=0,
+	Text="bring",TextColor3=C.btnText,TextSize=15,Font=en.Font.Gotham,
+},content)
+corner(bringBtn,6) stroke(bringBtn,c3(200,200,200))
+
+-- Status
+local statusLabel=mk("TextLabel",{
+	AnchorPoint=v2(0,1),Position=u2(0,0,1,-2),Size=u2(1,0,0,14),
+	BackgroundTransparency=1,Text="",
+	TextColor3=C.muted,TextSize=10,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},content)
+
+-- ── Draggable (original logic preserved exactly) ──
+local function Draggable(window,obj)
+	local MB1enum=en.UserInputType.MouseButton1
+	local TOUCHenum=en.UserInputType.Touch
+	obj=obj or window
+	local activeEntered=0
+	local mouseStart=nil
+	local dragStart=nil
+	local inputbegancon=nil
+	local rendersteppedcon=nil
+	local inputendedcon=nil
+	local function inputendedf(a)
+		a=a.UserInputType
+		if (a==MB1enum) or (a==TOUCHenum) then
+			rendersteppedcon:Disconnect()
+			inputendedcon:Disconnect()
+		end
+	end
+	local function rendersteppedf()
+		local o=uis:GetMouseLocation()-mouseStart
+		window.Position=dragStart+u2(0,o.X,0,o.Y)
+	end
+	local function inputbeganf(a)
+		a=a.UserInputType
+		if ((a==MB1enum) or (a==TOUCHenum)) and (activeEntered==0) and not uis:GetFocusedTextBox() then
+			mouseStart=uis:GetMouseLocation()
+			dragStart=window.Position
+			if rendersteppedcon then rendersteppedcon:Disconnect() end
+			rendersteppedcon=renderstepped:Connect(rendersteppedf)
+			if inputendedcon then inputendedcon:Disconnect() end
+			inputendedcon=uis.InputEnded:Connect(inputendedf)
+		end
+	end
+	obj.MouseEnter:Connect(function()
+		if inputbegancon then inputbegancon:Disconnect() end
+		inputbegancon=uis.InputBegan:Connect(inputbeganf)
+	end)
+	obj.MouseLeave:Connect(function()
+		inputbegancon:Disconnect()
+	end)
+	local function ondes(d)
+		if d:IsA("GuiObject") then
+			local thisEntered=false
+			local thisAdded=false
+			local con0=d.MouseEnter:Connect(function()
+				thisEntered=true
+				if (not thisAdded) and d.Active then
+					activeEntered=activeEntered+1
+					thisAdded=true
+				end
+			end)
+			local con1=d.MouseLeave:Connect(function()
+				thisEntered=false
+				if thisAdded then
+					activeEntered=activeEntered-1
+					thisAdded=false
+				end
+			end)
+			local con2=d:GetPropertyChangedSignal("Active"):Connect(function()
+				if thisEntered then
+					if thisAdded and not d.Active then
+						activeEntered=activeEntered-1
+						thisAdded=false
+					elseif d.Active and not thisAdded then
+						activeEntered=activeEntered+1
+						thisAdded=true
+					end
+				end
+			end)
+			local con3=nil
+			con3=d.AncestryChanged:Connect(function()
+				if not d:IsDescendantOf(window) then
+					if thisEntered then activeEntered=activeEntered-1 end
+					con0:Disconnect() con1:Disconnect() con2:Disconnect() con3:Disconnect()
+				end
+			end)
+		end
+	end
+	window.DescendantAdded:Connect(ondes)
+	local des=window:GetDescendants()
+	for i3=1,#des do ondes(des[i3]) end
+end
+Draggable(win,titleBar)
+
+-- ── Players ──
+local others={}
+for _,v in pairs(plrs:GetPlayers()) do if v~=lp then others[v]=true end end
+plrs.PlayerAdded:Connect(function(p) if p~=lp then others[p]=true end end)
+plrs.PlayerRemoving:Connect(function(p) others[p]=nil end)
+
+local function findplr(txt)
+	if txt=="" then return nil end
+	local lower=slower(txt)
+	for v in pairs(others) do if v.DisplayName==txt then return v end end
+	for v in pairs(others) do if v.Name==txt then return v end end
+	for v in pairs(others) do if slower(v.DisplayName)==lower then return v end end
+	for v in pairs(others) do if slower(v.Name)==lower then return v end end
+	local l=#txt
+	for v in pairs(others) do if ssub(v.DisplayName,1,l)==txt then return v end end
+	for v in pairs(others) do if ssub(v.Name,1,l)==txt then return v end end
+	for v in pairs(others) do if slower(ssub(v.DisplayName,1,l))==lower then return v end end
+	for v in pairs(others) do if slower(ssub(v.Name,1,l))==lower then return v end end
+	for v in pairs(others) do if slower(v.DisplayName):find(lower,1,true) then return v end end
+	for v in pairs(others) do if slower(v.Name):find(lower,1,true) then return v end end
+	return nil
+end
+
+local function setStatus(txt,col)
+	statusLabel.Text=txt
+	statusLabel.TextColor3=col or C.muted
+end
+
+local target=nil
+
+local function updateCard(plr)
+	if not plr then
+		infoBlock.Visible=false
+		nameBtnLabel.Text="Playername"
+		nameBtnLabel.TextColor3=C.muted
+		avatarLetter.Text="?"
+		avatarLetter.TextColor3=C.muted
+		return
+	end
+	infoBlock.Visible=true
+	local dn=plr.DisplayName~="" and plr.DisplayName or plr.Name
+	nameBtnLabel.Text=dn
+	nameBtnLabel.TextColor3=C.btnText
+	avatarLetter.Text=dn:sub(1,1):upper()
+	avatarLetter.TextColor3=C.accent
+
+	local char=plr.Character
+	local hum=char and gp(char,"Humanoid","Humanoid")
+	local team=plr.Team and plr.Team.Name or "None"
+	local hp=hum and math.floor(hum.Health).."/"..math.floor(hum.MaxHealth) or "—"
+	local age=plr.AccountAge.."d"
+	local ping="—"
+	pcall(function() ping=math.floor(plr:GetNetworkPing()*1000).."ms" end)
+
+	statVals["Display"].Text=dn
+	statVals["Username"].Text="@"..plr.Name
+	statVals["Team"].Text=team
+	statVals["Health"].Text=hp
+	statVals["Age"].Text=age
+	statVals["Ping"].Text=ping
+end
+
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local txt=searchBox.Text
+	nameBtnLabel.Text=txt=="" and "Playername" or txt
+	target=findplr(txt)
+	updateCard(target)
+	if target then
+		setStatus("player found",C.accent)
+	elseif txt~="" then
+		setStatus("no match")
+	else
+		setStatus("")
+	end
+end)
+
+task.spawn(function()
+	while true do
+		twait(2)
+		if target and infoBlock.Visible then updateCard(target) end
+	end
+end)
+
+plrs.PlayerRemoving:Connect(function(plr)
+	others[plr]=nil
+	if plr==target then
+		target=nil
+		updateCard(nil)
+		setStatus("player left")
+	end
+end)
+
+-- ── BRING: YOU are the platform ──
+-- My HRP teleports under their HRP and rides toward my original position,
+-- carrying them on top. No tweening the target — I move, they ride me.
+local bringing=false
+
+bringBtn.MouseButton1Click:Connect(function()
+	if bringing then
+		bringing=false
+		bringBtn.Text="bring"
+		bringBtn.BackgroundColor3=C.btn
+		bringBtn.TextColor3=C.btnText
+		setStatus("stopped")
+		return
+	end
+	if not target then return end
+
+	local myChar=lp.Character
+	local theirChar=target.Character
+	if not (myChar and theirChar) then return setStatus("no character",C.red) end
+	if not (myChar:IsDescendantOf(ws) and theirChar:IsDescendantOf(ws)) then return setStatus("not in workspace",C.red) end
+
+	local myHRP=gp(myChar,"HumanoidRootPart","BasePart")
+	local theirHRP=gp(theirChar,"HumanoidRootPart","BasePart")
+	if not (myHRP and theirHRP) then return setStatus("no HumanoidRootPart",C.red) end
+
+	bringing=true
+	bringBtn.Text="stop"
+	bringBtn.BackgroundColor3=c3(255,220,220)
+	bringBtn.TextColor3=C.red
+	setStatus("bringing…",C.accent)
+
+	task.spawn(function()
+		-- snapshot destination = where I currently am
+		local destCF=myHRP.CFrame
+		local destP=destCF.Position
+
+		-- snapshot start = where target currently is
+		local startP=theirHRP.Position
+
+		-- direction from target toward me
+		local dir=cf(startP,destP).LookVector
+		-- horizontal only so we don't fly up
+		dir=v3(dir.X,0,dir.Z)
+		if dir.Magnitude>0.001 then dir=dir.Unit else dir=v3(0,0,1) end
+
+		local dist=(v3(startP.X,0,startP.Z)-v3(destP.X,0,destP.Z)).Magnitude-2
+		if dist<0 then dist=0 end
+
+		local vel=0
+		local way=0
+		local reachedMax=false
+		local sine=osclock()
+		local lastsine=sine
+
+		while bringing and myChar:IsDescendantOf(ws) and theirChar:IsDescendantOf(ws) do
+			sine=osclock()
+			local dt=sine-lastsine
+			lastsine=sine
+
+			-- same acceleration curve as original bring
+			if reachedMax then
+				if dist-way<reachedMax then
+					vel=vel-dt*BRING_SPEED
+					if vel<0 then break end
+				end
+			else
+				if way>dist/2 then
+					vel=vel-dt*BRING_SPEED
+					if vel<0 then break end
+				else
+					vel=vel+dt*BRING_SPEED
+					if vel>BRING_MAX then reachedMax=way vel=BRING_MAX end
+				end
+			end
+			way=way+vel*dt
+
+			-- MY HRP slides from under target toward destination
+			local platformPos=v3(startP.X,startP.Y,startP.Z)+dir*way
+			-- stay 2.8 studs below their feet so they stand on me
+			local underTheirFeet=v3(
+				theirHRP.Position.X,
+				theirHRP.Position.Y-2.8,
+				theirHRP.Position.Z
+			)
+			-- blend: start fully under target, slide toward dest
+			-- We set my HRP under them and also push velocity in dir
+			-- so Roblox physics naturally carries them along
+			myHRP.CFrame=CFrame.new(underTheirFeet)*offAngle
+			myHRP.AssemblyLinearVelocity=dir*(vel+1)
+			myHRP.AssemblyAngularVelocity=v3_0
+
+			twait()
+		end
+
+		-- snap me to destination, zero velocity
+		myHRP.CFrame=destCF
+		myHRP.AssemblyLinearVelocity=v3_0
+		myHRP.AssemblyAngularVelocity=v3_0
+		bringing=false
+		bringBtn.Text="bring"
+		bringBtn.BackgroundColor3=C.btn
+		bringBtn.TextColor3=C.btnText
+		setStatus("done",C.accent)
+	end)
+end)
+
+-- ── SPEED ASSIST: platform treadmill ──
+-- Every frame: if target is walking, I go under them and push in their walk direction.
+-- If stopped, I sit under them still.
+task.spawn(function()
+	while true do
+		twait()
+		if not speedEnabled or not target or bringing then continue end
+
+		local myChar=lp.Character
+		local theirChar=target.Character
+		if not (myChar and theirChar) then continue end
+		if not (myChar:IsDescendantOf(ws) and theirChar:IsDescendantOf(ws)) then continue end
+
+		local myHRP=gp(myChar,"HumanoidRootPart","BasePart")
+		local theirHRP=gp(theirChar,"HumanoidRootPart","BasePart")
+		if not (myHRP and theirHRP) then continue end
+
+		local theirVel=theirHRP.AssemblyLinearVelocity
+		local horizVel=v3(theirVel.X,0,theirVel.Z)
+		local speed=horizVel.Magnitude
+
+		-- always sit directly under their feet
+		local underPos=v3(
+			theirHRP.Position.X,
+			theirHRP.Position.Y-2.8,
+			theirHRP.Position.Z
+		)
+
+		if speed>0.5 then
+			-- they are walking: my platform pushes in same direction, faster
+			local dir=horizVel.Unit
+			myHRP.CFrame=CFrame.new(underPos)*offAngle
+			-- push velocity is their speed * multiplier so I boost them forward
+			myHRP.AssemblyLinearVelocity=dir*(speed*2.5)
+			myHRP.AssemblyAngularVelocity=v3_0
+		else
+			-- stopped: sit still under them, no push
+			myHRP.CFrame=CFrame.new(underPos)*offAngle
+			myHRP.AssemblyLinearVelocity=v3_0
+			myHRP.AssemblyAngularVelocity=v3_0
+		end
+	end
+end)
+
+-- close/open
+closeBtn.MouseButton1Click:Connect(function()
+	win.Visible=false
+	openTab.Visible=true
+	if bringing then
+		bringing=false
+		bringBtn.Text="bring"
+		bringBtn.BackgroundColor3=C.btn
+		bringBtn.TextColor3=C.btnText
+	end
+end)
+openTab.MouseButton1Click:Connect(function()
+	win.Visible=true
+	openTab.Visible=false
+end)
+
+local ok=pcall(function() gui.Parent=game:FindFirstChildOfClass("CoreGui") end)
+if not ok then gui.Parent=lp:FindFirstChildOfClass("PlayerGui") endlocal plrs=game:FindFirstChildOfClass("Players")
+local lp=plrs.LocalPlayer
+local ws=game:FindFirstChildOfClass("Workspace")
+local uis=game:FindFirstChildOfClass("UserInputService")
+local rs=game:FindFirstChildOfClass("RunService")
+local renderstepped=rs.RenderStepped
+local angles=CFrame.Angles
+local cf=CFrame.new
+local v3=Vector3.new
+local v3_0=v3(0,0,0)
+local v3_010=v3(0,1,0)
+local twait=task.wait
+local osclock=os.clock
+local slower=string.lower
 local sc,mr=string.char,math.random
 
 local BRING_SPEED=32
