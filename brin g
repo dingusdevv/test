@@ -1,142 +1,118 @@
-local P = game:GetService("Players")
-local LP = P.LocalPlayer
-local function root(c) return c and c:FindFirstChild("HumanoidRootPart") end
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
 
-local UI = Instance.new("ScreenGui", LP.PlayerGui)
-local F = Instance.new("Frame", UI)
-F.Size = UDim2.new(0,300,0,400)
-F.Position = UDim2.new(0,10,0,10)
-F.BackgroundColor3 = Color3.fromRGB(30,30,30)
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "LocalAdminPanel"
 
-local S = Instance.new("TextBox", F)
-S.Size = UDim2.new(1,-20,0,30)
-S.Position = UDim2.new(0,10,0,10)
-S.PlaceholderText = "Search"
-S.BackgroundColor3 = Color3.fromRGB(40,40,40)
-S.TextColor3 = Color3.new(1,1,1)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 340)
+frame.Position = UDim2.new(0.5, -130, 0.5, -170)
+frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame)
 
-local L = Instance.new("ScrollingFrame", F)
-L.Position = UDim2.new(0,10,0,50)
-L.Size = UDim2.new(1,-20,1,-60)
-L.CanvasSize = UDim2.new()
+local search = Instance.new("TextBox", frame)
+search.Size = UDim2.new(1, -20, 0, 30)
+search.Position = UDim2.new(0,10,0,10)
+search.PlaceholderText = "Search player..."
+search.Text = ""
 
--- Mobile drag
-local UIS = game:GetService("UserInputService")
-local drag,dx,dy
-F.InputBegan:Connect(function(i)
-	if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then
-		drag=true dx=i.Position.X-F.AbsolutePosition.X dy=i.Position.Y-F.AbsolutePosition.Y
-	end
-end)
-F.InputEnded:Connect(function(i) if i.UserInputType.Name=="MouseButton1" or i.UserInputType.Name=="Touch" then drag=false end end)
-UIS.InputChanged:Connect(function(i)
-	if drag and (i.UserInputType.Name=="MouseMovement" or i.UserInputType.Name=="Touch") then
-		F.Position = UDim2.fromOffset(i.Position.X-dx,i.Position.Y-dy)
-	end
-end)
+local list = Instance.new("ScrollingFrame", frame)
+list.Size = UDim2.new(1, -20, 1, -120)
+list.Position = UDim2.new(0,10,0,50)
+list.BackgroundColor3 = Color3.fromRGB(35,35,35)
+list.ScrollBarThickness = 4
 
----------------------------------------------------------
--- FLING (compact + auto-stop if target moves fast)
----------------------------------------------------------
-local function fling(pl)
-	local my = root(LP.Character)
-	local tar = root(pl.Character)
-	if not (my and tar) then return end
+local layout = Instance.new("UIListLayout", list)
 
-	local save = my.CFrame
-	local BV = Instance.new("BodyVelocity", my)
-	BV.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-	BV.Velocity = Vector3.new(9e8,9e8,9e8)
+local selected
 
-	local last = tar.CFrame.Position
-	local t0 = tick()
-
-	while tick()-t0 < .5 do
-		if not tar.Parent then break end
-
-		-- target moved dramatically?
-		if (tar.CFrame.Position - last).Magnitude > 8 or tar.Velocity.Magnitude > 15 then
-			break
-		end
-		last = tar.CFrame.Position
-
-		my.CFrame = tar.CFrame * CFrame.new(0,1.5,0)
-		task.wait()
-	end
-
-	BV:Destroy()
-	task.wait()
-	if my.Parent then my.CFrame = save end
+-- smart partial match (fixed + compact)
+local function match(p, t)
+	t = t:lower()
+	return p.Name:lower():sub(1,#t) == t
+		or p.DisplayName:lower():sub(1,#t) == t
 end
 
----------------------------------------------------------
--- BRING (fixed)
----------------------------------------------------------
-local function bring(pl)
-	local my = root(LP.Character)
-	local tar = root(pl.Character)
-	if my and tar then
-		tar.CFrame = my.CFrame + Vector3.new(0,3,0)
-	end
+local function getHRP()
+	local c = lp.Character
+	return c and c:FindFirstChild("HumanoidRootPart")
 end
 
----------------------------------------------------------
--- UI generation (compact)
----------------------------------------------------------
 local function refresh()
-	for _,v in ipairs(L:GetChildren()) do if v:IsA("Frame") then v:Destroy() end end
-	local y=0
-	local q=S.Text:lower()
+	for _,v in ipairs(list:GetChildren()) do
+		if v:IsA("TextButton") then v:Destroy() end
+	end
 
-	for _,pl in ipairs(P:GetPlayers()) do
-		if pl~=LP then
-			local dn,un = pl.DisplayName:lower(), pl.Name:lower()
-			if dn:find(q) or un:find(q) then
-				local R=Instance.new("Frame",L)
-				R.Size=UDim2.new(1,0,0,55)
-				R.Position=UDim2.new(0,0,0,y)
-				R.BackgroundColor3=Color3.fromRGB(50,50,50)
+	for _,p in ipairs(Players:GetPlayers()) do
+		if p ~= lp then
+			if search.Text == "" or match(p, search.Text) then
+				local b = Instance.new("TextButton", list)
+				b.Size = UDim2.new(1,0,0,30)
+				b.Text = p.DisplayName .. " @" .. p.Name
+				b.BackgroundColor3 = Color3.fromRGB(45,45,45)
+				b.TextColor3 = Color3.new(1,1,1)
 
-				local H=Instance.new("ImageLabel",R)
-				H.Size=UDim2.new(0,45,0,45)
-				H.Position=UDim2.new(0,5,0,5)
-				H.BackgroundTransparency=1
-				local img=P:GetUserThumbnailAsync(pl.UserId,Enum.ThumbnailType.HeadShot,Enum.ThumbnailSize.Size100x100)
-				H.Image=img
-
-				local N=Instance.new("TextLabel",R)
-				N.Size=UDim2.new(.55,0,1,0)
-				N.Position=UDim2.new(0,55,0,0)
-				N.BackgroundTransparency=1
-				N.TextColor3=Color3.new(1,1,1)
-				N.Text=pl.DisplayName.." ["..pl.Name.."]"
-				N.TextXAlignment=Enum.TextXAlignment.Left
-
-				local B=Instance.new("TextButton",R)
-				B.Size=UDim2.new(0,55,0,25)
-				B.Position=UDim2.new(1,-120,0.5,-12)
-				B.Text="Bring"
-				B.BackgroundColor3=Color3.fromRGB(150,20,20)
-				B.TextColor3=Color3.new(1,1,1)
-				B.MouseButton1Click:Connect(function() bring(pl) end)
-
-				local Fg=Instance.new("TextButton",R)
-				Fg.Size=UDim2.new(0,55,0,25)
-				Fg.Position=UDim2.new(1,-60,0.5,-12)
-				Fg.Text="Fling"
-				Fg.BackgroundColor3=Color3.fromRGB(20,80,150)
-				Fg.TextColor3=Color3.new(1,1,1)
-				Fg.MouseButton1Click:Connect(function() fling(pl) end)
-
-				y+=60
+				b.MouseButton1Click:Connect(function()
+					selected = p
+				end)
 			end
 		end
 	end
 
-	L.CanvasSize=UDim2.new(0,0,0,y)
+	task.wait()
+	list.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y)
 end
 
-S:GetPropertyChangedSignal("Text"):Connect(refresh)
-P.PlayerAdded:Connect(refresh)
-P.PlayerRemoving:Connect(refresh)
-task.spawn(function() while task.wait(1) do refresh() end end)
+search:GetPropertyChangedSignal("Text"):Connect(refresh)
+Players.PlayerAdded:Connect(refresh)
+Players.PlayerRemoving:Connect(refresh)
+
+task.spawn(function()
+	while true do
+		refresh()
+		task.wait(2)
+	end
+end)
+
+-- BRING (local = teleport YOU to target)
+local bring = Instance.new("TextButton", frame)
+bring.Size = UDim2.new(0.5,-15,0,40)
+bring.Position = UDim2.new(0,10,1,-80)
+bring.Text = "BRING"
+
+bring.MouseButton1Click:Connect(function()
+	if not selected then return end
+	local hrp = getHRP()
+	local thrp = selected.Character and selected.Character:FindFirstChild("HumanoidRootPart")
+	if hrp and thrp then
+		hrp.CFrame = thrp.CFrame * CFrame.new(0,0,-3)
+	end
+end)
+
+-- FLING (local = launch YOU toward target for 1 second, then return)
+local fling = Instance.new("TextButton", frame)
+fling.Size = UDim2.new(0.5,-15,0,40)
+fling.Position = UDim2.new(0.5,5,1,-80)
+fling.Text = "FLING"
+
+fling.MouseButton1Click:Connect(function()
+	if not selected then return end
+
+	local hrp = getHRP()
+	local thrp = selected.Character and selected.Character:FindFirstChild("HumanoidRootPart")
+	if not (hrp and thrp) then return end
+
+	local old = hrp.CFrame
+	local start = tick()
+
+	while tick() - start < 1 do
+		local dir = (thrp.Position - hrp.Position).Unit
+		hrp.AssemblyLinearVelocity = dir * 120 + Vector3.new(0,60,0)
+		task.wait()
+	end
+
+	hrp.CFrame = old
+	hrp.AssemblyLinearVelocity = Vector3.zero
+end)
