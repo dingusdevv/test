@@ -468,18 +468,17 @@ task.spawn(function()
 					local walkspeed = horizV.Magnitude
 
 					if walkspeed <= 0.5 then
+						-- park under feet while stopped
+						local footY = hrp1.Position.Y - hrp1.Size.Y / 2
+						hrp.CFrame = cf(v3(hrp1.Position.X, footY, hrp1.Position.Z)) * off
+						hrp.Velocity = v3_0
+						hrp.RotVelocity = v3_0
 						twait()
 						continue
 					end
 
 					local dir = horizV.Unit
-
-					-- foot Y: target HRP Y minus half their HRP size (puts us at sole level)
-					local footY = hrp1.Position.Y - hrp1.Size.Y / 2
-
-					local vel = 0
-					local way = 0
-					local reachedmaxspeed = false
+					local vel = maxspeed -- start at maxspeed immediately, no ramp needed
 					local sine = osclock()
 					local lastsine = sine
 
@@ -492,44 +491,27 @@ task.spawn(function()
 						local hv2 = v3(tv2.X, 0, tv2.Z)
 						if hv2.Magnitude <= 0.5 then break end
 
-						dir = hv2.Unit
+						local newDir = hv2.Unit
 
-						-- always recalc footY each tick so stairs/slopes stay correct
-						footY = hrp1.Position.Y - hrp1.Size.Y / 2
+						-- if they turned more than ~30 degrees, break and restart cycle
+						if dir:Dot(newDir) < 0.85 then break end
 
-						-- my position: directly under their feet, ahead in walk dir
+						dir = newDir
+
+						local footY = hrp1.Position.Y - hrp1.Size.Y / 2
+
+						-- origin is ALWAYS their current feet position, offset forward
+						-- so way never drifts from a stale start point
 						local basePos = v3(hrp1.Position.X, footY, hrp1.Position.Z)
+						local offsetPos = basePos + dir * 3  -- 3 studs ahead of their feet
 						local toP = basePos + dir * 50
 
-						if reachedmaxspeed then
-							if (basePos - v3(hrp.Position.X, footY, hrp.Position.Z)).Magnitude < reachedmaxspeed then
-								vel = vel - dt * speeding
-								if vel < 0 then break end
-							end
-						else
-							vel = vel + dt * speeding
-							if vel > maxspeed then
-								reachedmaxspeed = way
-								vel = maxspeed
-							end
-						end
-
-						way = way + vel * dt
-
-						-- place me at foot level under them, pushed forward
-						local newPos = v3(basePos.X + dir.X * way, footY, basePos.Z + dir.Z * way)
-						hrp.CFrame = cf(newPos, toP) * off
-						hrp.Velocity = dir * (vel + 1)
+						hrp.CFrame = cf(offsetPos, toP) * off
+						hrp.Velocity = dir * (maxspeed + 1)
 						hrp.RotVelocity = v3_0
 
 						twait()
 					end
-
-					-- park cleanly under feet when cycle ends
-					local footYFinal = hrp1.Position.Y - hrp1.Size.Y / 2
-					hrp.CFrame = cf(v3(hrp1.Position.X, footYFinal, hrp1.Position.Z)) * off
-					hrp.Velocity = v3_0
-					hrp.RotVelocity = v3_0
 				end
 				assisting = false
 			end)
@@ -538,7 +520,6 @@ task.spawn(function()
 		end
 	end
 end)
-
 -- close / open
 closeBtn.MouseButton1Click:Connect(function()
 	win.Visible=false openTab.Visible=true
