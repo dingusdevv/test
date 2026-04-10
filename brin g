@@ -90,7 +90,7 @@ corner(openTab,4) stroke(openTab)
 -- Main window
 local win=mk("Frame",{
 	AnchorPoint=v2(0.5,0.5),Position=u2(0.5,0,0.5,0),
-	Size=u2(0,540,0,370),BackgroundColor3=C.bg,BorderSizePixel=0,
+	Size=u2(0,540,0,390),BackgroundColor3=C.bg,BorderSizePixel=0,
 },gui)
 corner(win,8) stroke(win)
 
@@ -180,9 +180,9 @@ for idx,label in ipairs(statDefs) do
 	},row)
 end
 
--- Speed assist checkbox
+-- Speed assist checkbox + speed +/-
 local speedRow=mk("Frame",{
-	Position=u2(0,0,1,-130),Size=u2(0,220,0,26),
+	Position=u2(0,0,1,-150),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },content)
 local checkbox=mk("TextButton",{
@@ -200,12 +200,33 @@ mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },speedRow)
 
-local speedEnabled=false
-checkbox.MouseButton1Click:Connect(function()
-	speedEnabled=not speedEnabled
-	checkmark.Visible=speedEnabled
-	checkbox.BackgroundColor3=speedEnabled and C.accentDim or C.surface
-end)
+-- Speed power row
+local speedPowerRow=mk("Frame",{
+	Position=u2(0,0,1,-122),Size=u2(0,220,0,18),
+	BackgroundTransparency=1,BorderSizePixel=0,
+},content)
+mk("TextLabel",{
+	Size=u2(0,60,1,0),BackgroundTransparency=1,
+	Text="SP Power:",TextColor3=C.muted,TextSize=11,Font=en.Font.Gotham,
+	TextXAlignment=en.TextXAlignment.Left,
+},speedPowerRow)
+local spMinusBtn=mk("TextButton",{
+	Position=u2(0,62,0.5,-8),Size=u2(0,16,0,16),
+	BackgroundColor3=C.surface,Text="-",TextColor3=C.text,
+	TextSize=13,Font=en.Font.GothamBold,BorderSizePixel=0,
+},speedPowerRow)
+corner(spMinusBtn,4) stroke(spMinusBtn)
+local speedPowerLabel=mk("TextLabel",{
+	Position=u2(0,82,0,0),Size=u2(0,30,1,0),BackgroundTransparency=1,
+	Text="75",TextColor3=C.text,TextSize=11,Font=en.Font.GothamBold,
+	TextXAlignment=en.TextXAlignment.Center,
+},speedPowerRow)
+local spPlusBtn=mk("TextButton",{
+	Position=u2(0,114,0.5,-8),Size=u2(0,16,0,16),
+	BackgroundColor3=C.surface,Text="+",TextColor3=C.text,
+	TextSize=13,Font=en.Font.GothamBold,BorderSizePixel=0,
+},speedPowerRow)
+corner(spPlusBtn,4) stroke(spPlusBtn)
 
 -- Jump assist checkbox
 local jumpRow=mk("Frame",{
@@ -227,7 +248,7 @@ mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },jumpRow)
 
--- Power control row
+-- Jump power row
 local powerRow=mk("Frame",{
 	Position=u2(0,0,1,-72),Size=u2(0,220,0,18),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -255,23 +276,6 @@ local plusBtn=mk("TextButton",{
 },powerRow)
 corner(plusBtn,4) stroke(plusBtn)
 
-local jumpEnabled=false
-local jumpPower=100
-
-jumpCheckbox.MouseButton1Click:Connect(function()
-	jumpEnabled=not jumpEnabled
-	jumpCheckmark.Visible=jumpEnabled
-	jumpCheckbox.BackgroundColor3=jumpEnabled and C.accentDim or C.surface
-end)
-minusBtn.MouseButton1Click:Connect(function()
-	jumpPower=math.max(10,jumpPower-10)
-	powerLabel.Text=tostring(jumpPower)
-end)
-plusBtn.MouseButton1Click:Connect(function()
-	jumpPower=math.min(500,jumpPower+10)
-	powerLabel.Text=tostring(jumpPower)
-end)
-
 -- Bring button
 local bringBtn=mk("TextButton",{
 	Position=u2(0,0,1,-48),Size=u2(0,190,0,38),
@@ -287,6 +291,41 @@ local statusLabel=mk("TextLabel",{
 	TextColor3=C.muted,TextSize=10,Font=en.Font.Gotham,
 	TextXAlignment=en.TextXAlignment.Left,
 },content)
+
+-- State
+local speedEnabled=false
+local speedPower=75 -- mirrors maxspeed default
+local jumpEnabled=false
+local jumpPower=100
+
+checkbox.MouseButton1Click:Connect(function()
+	speedEnabled=not speedEnabled
+	checkmark.Visible=speedEnabled
+	checkbox.BackgroundColor3=speedEnabled and C.accentDim or C.surface
+end)
+spMinusBtn.MouseButton1Click:Connect(function()
+	speedPower=math.max(10,speedPower-5)
+	maxspeed=speedPower
+	speedPowerLabel.Text=tostring(speedPower)
+end)
+spPlusBtn.MouseButton1Click:Connect(function()
+	speedPower=math.min(300,speedPower+5)
+	maxspeed=speedPower
+	speedPowerLabel.Text=tostring(speedPower)
+end)
+jumpCheckbox.MouseButton1Click:Connect(function()
+	jumpEnabled=not jumpEnabled
+	jumpCheckmark.Visible=jumpEnabled
+	jumpCheckbox.BackgroundColor3=jumpEnabled and C.accentDim or C.surface
+end)
+minusBtn.MouseButton1Click:Connect(function()
+	jumpPower=math.max(10,jumpPower-10)
+	powerLabel.Text=tostring(jumpPower)
+end)
+plusBtn.MouseButton1Click:Connect(function()
+	jumpPower=math.min(500,jumpPower+10)
+	powerLabel.Text=tostring(jumpPower)
+end)
 
 -- Draggable
 local function Draggable(window,obj)
@@ -533,6 +572,11 @@ task.spawn(function()
 					local walkspeed=horizV.Magnitude
 
 					if walkspeed<=0.5 then
+						-- park cleanly under feet while stopped
+						local footY=hrp1.Position.Y-hrp1.Size.Y/2
+						hrp.CFrame=cf(v3(hrp1.Position.X,footY,hrp1.Position.Z))*off
+						hrp.Velocity=v3_0
+						hrp.RotVelocity=v3_0
 						twait()
 						continue
 					end
@@ -556,7 +600,7 @@ task.spawn(function()
 
 						local newDir=hv2.Unit
 
-						-- reset cycle on turn
+						-- reset on turn
 						if dir:Dot(newDir)<0.85 then
 							vel=0
 							way=0
@@ -569,10 +613,10 @@ task.spawn(function()
 						local basePos=v3(hrp1.Position.X,footY,hrp1.Position.Z)
 						local toP=basePos+dir*50
 
-						-- reset if more than 24 studs ahead
+						-- clamp: if more than 4 studs ahead in walk dir, reset
 						local myHorizPos=v3(hrp.Position.X,footY,hrp.Position.Z)
 						local ahead=(myHorizPos-basePos):Dot(dir)
-						if ahead>24 then
+						if ahead>4 then
 							vel=0
 							way=0
 							reachedmaxspeed=false
@@ -616,11 +660,13 @@ end)
 
 -- ── JUMP ASSIST ──
 task.spawn(function()
-	local wasInAir=false
+	local lastY=nil
+	local jumpFired=false
 	while true do
 		twait()
 		if not jumpEnabled or not target or bringing then
-			wasInAir=false
+			lastY=nil
+			jumpFired=false
 			continue
 		end
 
@@ -630,26 +676,29 @@ task.spawn(function()
 		if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then continue end
 		local hrp=gp(c,"HumanoidRootPart","BasePart")
 		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
-		local hum1=gp(c1,"Humanoid","Humanoid")
-		if not (hrp and hrp1 and hum1) then continue end
+		if not (hrp and hrp1) then continue end
 
-		local inAir=not hrp1:IsGrounded()
+		local currentY=hrp1.Position.Y
 
-		if inAir and not wasInAir then
+		-- detect upward movement start = jump
+		local jumping=hrp1.Velocity.Y>2
+
+		if jumping and not jumpFired then
+			jumpFired=true
 			task.spawn(function()
+				-- snap directly under their feet
 				local footY=hrp1.Position.Y-hrp1.Size.Y/2
-				local basePos=v3(hrp1.Position.X,footY-1,hrp1.Position.Z)
-				hrp.CFrame=cf(basePos)
+				hrp.CFrame=cf(v3(hrp1.Position.X,footY-0.5,hrp1.Position.Z))
 				hrp.Velocity=v3_0
 				hrp.RotVelocity=v3_0
 
-				twait(0.02)
-
+				-- flick up
 				hrp.Velocity=v3(0,jumpPower,0)
 				hrp.RotVelocity=v3_0
 
+				-- sustain upward push for 0.12s so it stays under them through lag
 				local t=0
-				while t<0.15 do
+				while t<0.12 do
 					local dt=twait()
 					t=t+dt
 					if not hrp1 or not hrp then break end
@@ -661,7 +710,12 @@ task.spawn(function()
 			end)
 		end
 
-		wasInAir=inAir
+		-- reset once they land (velocity Y near 0 or negative after a jump)
+		if jumpFired and hrp1.Velocity.Y<=-1 then
+			jumpFired=false
+		end
+
+		lastY=currentY
 	end
 end)
 
