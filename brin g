@@ -5,7 +5,6 @@ local uis=game:FindFirstChildOfClass("UserInputService")
 local rs=game:FindFirstChildOfClass("RunService")
 local heartbeat=rs.Heartbeat
 local renderstepped=rs.RenderStepped
-
 local angles=CFrame.Angles
 local cf=CFrame.new
 local v3=Vector3.new
@@ -13,6 +12,8 @@ local v3_010=v3(0,1,0)
 local v3_0=v3(0,0,0)
 local osclock=os.clock
 local twait=task.wait
+local slower=string.lower
+local ssub=string.sub
 
 local speeding=32
 local maxspeed=75
@@ -20,8 +21,10 @@ local off=angles(-1.5707963267948966,0,0)
 
 local function gp(p,n,cl)
 	if typeof(p)=="Instance" then
-		for _,v in ipairs(p:GetChildren()) do
-			if v.Name==n and v:IsA(cl) then
+		local c=p:GetChildren()
+		for i=1,#c do
+			local v=c[i]
+			if (v.Name==n) and v:IsA(cl) then
 				return v
 			end
 		end
@@ -32,162 +35,696 @@ end
 local i=Instance.new
 local v2=Vector2.new
 local bc=BrickColor.new
-local c3=Color3.new
+local c3=Color3.fromRGB
 local u2=UDim2.new
+local sc,mr=string.char,math.random
+local e=Enum
 
-local gui=i("ScreenGui")
-local main=i("Frame")
-local title=i("TextLabel")
-local list=i("Frame")
-local layout=i("UIListLayout")
-local close=i("TextButton")
+local function rs2(l)
+	l=l or mr(8,15)
+	local s=""
+	for _=1,l do
+		if mr(1,2)==1 then s=s..sc(mr(65,90))
+		else s=s..sc(mr(97,122)) end
+	end
+	return s
+end
 
-gui.Name="BringGui"
-gui.ResetOnSpawn=false
+-- Colors
+local COL_BG_DARK    = c3(17,17,17)
+local COL_BG_MID     = c3(26,26,26)
+local COL_BG_LIGHT   = c3(37,37,37)
+local COL_SIDEBAR    = c3(20,20,20)
+local COL_ACCENT     = c3(76,175,80)
+local COL_ACCENT_DIM = c3(30,58,30)
+local COL_BORDER     = c3(42,42,42)
+local COL_TEXT       = c3(238,238,238)
+local COL_MUTED      = c3(102,102,102)
+local COL_WHITE      = c3(255,255,255)
+local COL_RED        = c3(255,95,87)
 
-main.AnchorPoint=v2(0.5,0.5)
-main.Position=u2(0.5,0,0.5,0)
-main.Size=u2(0,260,0,320)
-main.BackgroundColor3=c3(0.12,0.12,0.12)
-main.BorderSizePixel=0
-main.Parent=gui
+-- Helpers
+local function make(cls,props)
+	local obj=Instance.new(cls)
+	for k,v in pairs(props) do
+		obj[k]=v
+	end
+	return obj
+end
 
-title.Size=u2(1,0,0,28)
-title.BackgroundTransparency=1
-title.Text="FE BRING (Arc Engine)"
-title.TextColor3=c3(0.9,0.9,0.9)
-title.Parent=main
+local function addCorner(parent,radius)
+	local c=Instance.new("UICorner")
+	c.CornerRadius=UDim.new(0,radius or 6)
+	c.Parent=parent
+	return c
+end
 
-close.Size=u2(0,28,0,28)
-close.Position=u2(1,-30,0,0)
-close.Text="X"
-close.Parent=main
+local function addPad(parent,top,right,bottom,left)
+	local p=Instance.new("UIPadding")
+	p.PaddingTop=UDim.new(0,top or 0)
+	p.PaddingRight=UDim.new(0,right or 0)
+	p.PaddingBottom=UDim.new(0,bottom or 0)
+	p.PaddingLeft=UDim.new(0,left or 0)
+	p.Parent=parent
+	return p
+end
 
-list.Position=u2(0,10,0,35)
-list.Size=u2(1,-20,1,-45)
-list.BackgroundColor3=c3(0.18,0.18,0.18)
-list.BorderSizePixel=0
-list.Parent=main
+local function addStroke(parent,color,thickness)
+	local s=Instance.new("UIStroke")
+	s.Color=color or COL_BORDER
+	s.Thickness=thickness or 1
+	s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+	s.Parent=parent
+	return s
+end
 
-layout.Parent=list
-layout.Padding=UDim.new(0,4)
+-- ScreenGui
+local gui=make("ScreenGui",{
+	Name=rs2(),
+	ResetOnSpawn=false,
+	ZIndexBehavior=Enum.ZIndexBehavior.Sibling,
+})
 
-local open=true
-close.MouseButton1Click:Connect(function()
-	open=not open
-	main.Visible=open
+-- Open button (shown when panel is closed)
+local openBtn=make("TextButton",{
+	Name=rs2(),
+	AnchorPoint=v2(0,0.5),
+	Position=u2(0,0,0.5,0),
+	Size=u2(0,24,0,80),
+	BackgroundColor3=COL_BG_MID,
+	Text="▶",
+	TextColor3=COL_MUTED,
+	TextSize=12,
+	Font=Enum.Font.GothamBold,
+	Visible=false,
+	Parent=gui,
+	ZIndex=10,
+})
+addCorner(openBtn,4)
+addStroke(openBtn,COL_BORDER,1)
+-- round right side only via no left-side corner
+make("UICorner",{CornerRadius=UDim.new(0,6),Parent=openBtn})
+
+-- Main panel
+local panel=make("Frame",{
+	Name=rs2(),
+	AnchorPoint=v2(0.5,0.5),
+	Position=u2(0.5,0,0.5,0),
+	Size=u2(0,520,0,300),
+	BackgroundColor3=COL_BG_MID,
+	BorderSizePixel=0,
+	Parent=gui,
+})
+addCorner(panel,10)
+addStroke(panel,COL_BORDER,1)
+
+-- Title bar
+local titleBar=make("Frame",{
+	Name=rs2(),
+	Size=u2(1,0,0,34),
+	BackgroundColor3=COL_BG_DARK,
+	BorderSizePixel=0,
+	Parent=panel,
+})
+addCorner(titleBar,10)
+-- cover bottom corners of title bar
+make("Frame",{
+	Size=u2(1,0,0.5,0),
+	Position=u2(0,0,0.5,0),
+	BackgroundColor3=COL_BG_DARK,
+	BorderSizePixel=0,
+	Parent=titleBar,
+})
+local titleSep=make("Frame",{
+	Position=u2(0,0,1,-1),
+	Size=u2(1,0,0,1),
+	BackgroundColor3=COL_BORDER,
+	BorderSizePixel=0,
+	Parent=titleBar,
+})
+
+local titleLabel=make("TextLabel",{
+	Name=rs2(),
+	Size=u2(1,0,1,0),
+	BackgroundTransparency=1,
+	Text="  Admin Panel",
+	TextColor3=COL_TEXT,
+	TextSize=14,
+	Font=Enum.Font.GothamBold,
+	TextXAlignment=Enum.TextXAlignment.Left,
+	Parent=titleBar,
+})
+
+-- Close button
+local closeBtn=make("TextButton",{
+	Name=rs2(),
+	AnchorPoint=v2(1,0.5),
+	Position=u2(1,-10,0.5,0),
+	Size=u2(0,14,0,14),
+	BackgroundColor3=COL_RED,
+	Text="",
+	BorderSizePixel=0,
+	Parent=titleBar,
+})
+addCorner(closeBtn,7)
+
+-- Body frame
+local body=make("Frame",{
+	Name=rs2(),
+	Position=u2(0,0,0,34),
+	Size=u2(1,0,1,-62),
+	BackgroundTransparency=1,
+	BorderSizePixel=0,
+	Parent=panel,
+})
+
+-- Sidebar
+local sidebar=make("Frame",{
+	Name=rs2(),
+	Size=u2(0,120,1,0),
+	BackgroundColor3=COL_SIDEBAR,
+	BorderSizePixel=0,
+	Parent=body,
+})
+-- cover right corners
+make("Frame",{
+	AnchorPoint=v2(1,0),
+	Position=u2(1,0,0,0),
+	Size=u2(0,6,1,0),
+	BackgroundColor3=COL_SIDEBAR,
+	BorderSizePixel=0,
+	Parent=sidebar,
+})
+addStroke(sidebar,COL_BORDER,1)
+
+local navItems={"Bring","Players","Kick","Speed","Teleport"}
+local navFrames={}
+for idx,label in ipairs(navItems) do
+	local nf=make("TextButton",{
+		Name=rs2(),
+		Position=u2(0,0,0,(idx-1)*38),
+		Size=u2(1,0,0,36),
+		BackgroundTransparency=1,
+		Text=label,
+		TextColor3=idx==1 and COL_TEXT or COL_MUTED,
+		TextSize=13,
+		Font=Enum.Font.Gotham,
+		TextXAlignment=Enum.TextXAlignment.Left,
+		BorderSizePixel=0,
+		Parent=sidebar,
+		ZIndex=2,
+	})
+	addPad(nf,0,0,0,14)
+	if idx==1 then
+		local accent=make("Frame",{
+			Name=rs2(),
+			Position=u2(0,0,0,0),
+			Size=u2(0,3,1,0),
+			BackgroundColor3=COL_ACCENT,
+			BorderSizePixel=0,
+			Parent=nf,
+		})
+		navFrames[idx]={btn=nf,accent=accent}
+	else
+		navFrames[idx]={btn=nf}
+	end
+end
+
+-- Content area
+local content=make("Frame",{
+	Name=rs2(),
+	Position=u2(0,120,0,0),
+	Size=u2(1,-120,1,0),
+	BackgroundTransparency=1,
+	BorderSizePixel=0,
+	Parent=body,
+})
+addPad(content,12,12,12,12)
+
+local contentList=make("UIListLayout",{
+	SortOrder=Enum.SortOrder.LayoutOrder,
+	Padding=UDim.new(0,8),
+	Parent=content,
+})
+
+-- Search box
+local searchBox=make("TextBox",{
+	Name=rs2(),
+	Size=u2(1,0,0,34),
+	BackgroundColor3=COL_BG_LIGHT,
+	BorderSizePixel=0,
+	PlaceholderText="Search player by name or display name...",
+	PlaceholderColor3=COL_MUTED,
+	Text="",
+	TextColor3=COL_TEXT,
+	TextSize=13,
+	Font=Enum.Font.Gotham,
+	ClearTextOnFocus=false,
+	LayoutOrder=1,
+	Parent=content,
+})
+addCorner(searchBox,6)
+addStroke(searchBox,COL_BORDER,1)
+addPad(searchBox,0,0,0,10)
+
+-- Player info card
+local playerCard=make("Frame",{
+	Name=rs2(),
+	Size=u2(1,0,0,108),
+	BackgroundColor3=COL_BG_LIGHT,
+	BorderSizePixel=0,
+	LayoutOrder=2,
+	Parent=content,
+})
+addCorner(playerCard,8)
+addStroke(playerCard,COL_BORDER,1)
+
+-- Placeholder label (shown when no player selected)
+local noPlayerLabel=make("TextLabel",{
+	Name=rs2(),
+	Size=u2(1,0,1,0),
+	BackgroundTransparency=1,
+	Text="No player selected",
+	TextColor3=COL_MUTED,
+	TextSize=13,
+	Font=Enum.Font.Gotham,
+	Parent=playerCard,
+})
+
+-- Avatar circle
+local avatarFrame=make("Frame",{
+	Name=rs2(),
+	Position=u2(0,12,0.5,-24),
+	Size=u2(0,48,0,48),
+	BackgroundColor3=c3(30,58,30),
+	BorderSizePixel=0,
+	Visible=false,
+	Parent=playerCard,
+})
+addCorner(avatarFrame,8)
+local avatarLabel=make("TextLabel",{
+	Size=u2(1,0,1,0),
+	BackgroundTransparency=1,
+	Text="?",
+	TextColor3=COL_ACCENT,
+	TextSize=22,
+	Font=Enum.Font.GothamBold,
+	Parent=avatarFrame,
+})
+
+-- Info labels
+local infoFrame=make("Frame",{
+	Name=rs2(),
+	Position=u2(0,72,0,10),
+	Size=u2(1,-84,1,-20),
+	BackgroundTransparency=1,
+	Visible=false,
+	Parent=playerCard,
+})
+
+local displayNameLabel=make("TextLabel",{
+	Name=rs2(),
+	Size=u2(1,0,0,20),
+	BackgroundTransparency=1,
+	Text="DisplayName",
+	TextColor3=COL_TEXT,
+	TextSize=14,
+	Font=Enum.Font.GothamBold,
+	TextXAlignment=Enum.TextXAlignment.Left,
+	Parent=infoFrame,
+})
+local usernameLabel=make("TextLabel",{
+	Name=rs2(),
+	Position=u2(0,0,0,20),
+	Size=u2(1,0,0,16),
+	BackgroundTransparency=1,
+	Text="@username",
+	TextColor3=COL_MUTED,
+	TextSize=12,
+	Font=Enum.Font.Gotham,
+	TextXAlignment=Enum.TextXAlignment.Left,
+	Parent=infoFrame,
+})
+local statsLabel=make("TextLabel",{
+	Name=rs2(),
+	Position=u2(0,0,0,42),
+	Size=u2(1,0,0,48),
+	BackgroundTransparency=1,
+	Text="",
+	TextColor3=c3(170,170,170),
+	TextSize=12,
+	Font=Enum.Font.Gotham,
+	TextXAlignment=Enum.TextXAlignment.Left,
+	TextYAlignment=Enum.TextYAlignment.Top,
+	TextWrapped=true,
+	Parent=infoFrame,
+})
+local onlineDot=make("Frame",{
+	AnchorPoint=v2(0,0.5),
+	Position=u2(0,-10,0,10),
+	Size=u2(0,6,0,6),
+	BackgroundColor3=COL_ACCENT,
+	BorderSizePixel=0,
+	Parent=displayNameLabel,
+})
+addCorner(onlineDot,3)
+
+-- Bring button
+local bringBtn=make("TextButton",{
+	Name=rs2(),
+	Size=u2(1,0,0,34),
+	BackgroundColor3=COL_ACCENT_DIM,
+	BorderSizePixel=0,
+	Text="BRING",
+	TextColor3=COL_ACCENT,
+	TextSize=13,
+	Font=Enum.Font.GothamBold,
+	LayoutOrder=3,
+	Parent=content,
+})
+addCorner(bringBtn,6)
+addStroke(bringBtn,c3(45,90,45),1)
+
+-- Status bar
+local statusBar=make("Frame",{
+	Name=rs2(),
+	AnchorPoint=v2(0,1),
+	Position=u2(0,0,1,0),
+	Size=u2(1,0,0,28),
+	BackgroundColor3=COL_BG_DARK,
+	BorderSizePixel=0,
+	Parent=panel,
+})
+addCorner(statusBar,10)
+make("Frame",{
+	Size=u2(1,0,0.5,0),
+	BackgroundColor3=COL_BG_DARK,
+	BorderSizePixel=0,
+	Parent=statusBar,
+})
+make("Frame",{
+	Position=u2(0,0,0,0),
+	Size=u2(1,0,0,1),
+	BackgroundColor3=COL_BORDER,
+	BorderSizePixel=0,
+	Parent=statusBar,
+})
+local creditLabel=make("TextLabel",{
+	Name=rs2(),
+	Size=u2(0.5,0,1,0),
+	BackgroundTransparency=1,
+	Text="  by MyWorld",
+	TextColor3=COL_MUTED,
+	TextSize=11,
+	Font=Enum.Font.Gotham,
+	TextXAlignment=Enum.TextXAlignment.Left,
+	Parent=statusBar,
+})
+local statusLabel=make("TextLabel",{
+	Name=rs2(),
+	AnchorPoint=v2(1,0),
+	Position=u2(1,-8,0,0),
+	Size=u2(0.5,0,1,0),
+	BackgroundTransparency=1,
+	Text="ready",
+	TextColor3=COL_MUTED,
+	TextSize=11,
+	Font=Enum.Font.Gotham,
+	TextXAlignment=Enum.TextXAlignment.Right,
+	Parent=statusBar,
+})
+
+-- Draggable
+local function Draggable(window,obj)
+	local MB1=Enum.UserInputType.MouseButton1
+	local TOUCH=Enum.UserInputType.Touch
+	obj=obj or window
+	local activeEntered=0
+	local mouseStart=nil
+	local dragStart=nil
+	local rendcon=nil
+	local endcon=nil
+	local function onEnd(a)
+		a=a.UserInputType
+		if a==MB1 or a==TOUCH then
+			if rendcon then rendcon:Disconnect() end
+			if endcon then endcon:Disconnect() end
+		end
+	end
+	local function onRend()
+		local o=uis:GetMouseLocation()-mouseStart
+		window.Position=dragStart+u2(0,o.X,0,o.Y)
+	end
+	local function onBegan(a)
+		a=a.UserInputType
+		if (a==MB1 or a==TOUCH) and activeEntered==0 and not uis:GetFocusedTextBox() then
+			mouseStart=uis:GetMouseLocation()
+			dragStart=window.Position
+			if rendcon then rendcon:Disconnect() end
+			rendcon=renderstepped:Connect(onRend)
+			if endcon then endcon:Disconnect() end
+			endcon=uis.InputEnded:Connect(onEnd)
+		end
+	end
+	local begancon=nil
+	obj.MouseEnter:Connect(function()
+		if begancon then begancon:Disconnect() end
+		begancon=uis.InputBegan:Connect(onBegan)
+	end)
+	obj.MouseLeave:Connect(function()
+		if begancon then begancon:Disconnect() end
+	end)
+	local function onDes(d)
+		if not d:IsA("GuiObject") then return end
+		local entered,added=false,false
+		local c0=d.MouseEnter:Connect(function()
+			entered=true
+			if not added and d.Active then activeEntered=activeEntered+1 added=true end
+		end)
+		local c1=d.MouseLeave:Connect(function()
+			entered=false
+			if added then activeEntered=activeEntered-1 added=false end
+		end)
+		local c2=d:GetPropertyChangedSignal("Active"):Connect(function()
+			if entered then
+				if added and not d.Active then activeEntered=activeEntered-1 added=false
+				elseif d.Active and not added then activeEntered=activeEntered+1 added=true end
+			end
+		end)
+		local c3
+		c3=d.AncestryChanged:Connect(function()
+			if not d:IsDescendantOf(window) then
+				if entered then activeEntered=activeEntered-1 end
+				c0:Disconnect() c1:Disconnect() c2:Disconnect() c3:Disconnect()
+			end
+		end)
+	end
+	window.DescendantAdded:Connect(onDes)
+	for _,d in ipairs(window:GetDescendants()) do onDes(d) end
+end
+Draggable(panel,titleBar)
+
+-- Player tracking
+local others={}
+for _,v in pairs(plrs:GetPlayers()) do
+	if v~=lp then others[v]=true end
+end
+plrs.PlayerAdded:Connect(function(plr)
+	if plr~=lp then others[plr]=true end
+end)
+plrs.PlayerRemoving:Connect(function(plr)
+	others[plr]=nil
 end)
 
-local function hrp(p)
-	local c=p.Character
-	if not c then return end
-	return c:FindFirstChild("HumanoidRootPart")
+-- Improved search: exact display → exact name → lower display → lower name → partial display → partial name
+local function findplr(txt)
+	if txt=="" then return nil end
+	local lower=slower(txt)
+	-- exact
+	for v in pairs(others) do
+		if v.DisplayName==txt then return v end
+	end
+	for v in pairs(others) do
+		if v.Name==txt then return v end
+	end
+	-- lower exact
+	for v in pairs(others) do
+		if slower(v.DisplayName)==lower then return v end
+	end
+	for v in pairs(others) do
+		if slower(v.Name)==lower then return v end
+	end
+	-- contains
+	for v in pairs(others) do
+		if slower(v.DisplayName):find(lower,1,true) then return v end
+	end
+	for v in pairs(others) do
+		if slower(v.Name):find(lower,1,true) then return v end
+	end
+	return nil
 end
 
-local function clear()
-	for _,v in ipairs(list:GetChildren()) do
-		if v:IsA("Frame") then v:Destroy() end
+local target=nil
+local function setStatus(txt,col)
+	statusLabel.Text=txt
+	statusLabel.TextColor3=col or COL_MUTED
+end
+
+local function updateCard(plr)
+	if not plr then
+		noPlayerLabel.Visible=true
+		avatarFrame.Visible=false
+		infoFrame.Visible=false
+		bringBtn.TextColor3=COL_MUTED
+		bringBtn.BackgroundColor3=COL_BG_LIGHT
+		return
+	end
+	noPlayerLabel.Visible=false
+	avatarFrame.Visible=true
+	infoFrame.Visible=true
+
+	local dn=plr.DisplayName or plr.Name
+	avatarLabel.Text=ssub(dn,1,1):upper()
+	displayNameLabel.Text="  "..dn
+	usernameLabel.Text="@"..plr.Name
+
+	local char=plr.Character
+	local hrp=char and gp(char,"HumanoidRootPart","BasePart")
+	local hum=char and gp(char,"Humanoid","Humanoid")
+	local health=hum and math.floor(hum.Health).."/"..math.floor(hum.MaxHealth) or "N/A"
+	local pos=hrp and string.format("%.0f, %.0f, %.0f",hrp.Position.X,hrp.Position.Y,hrp.Position.Z) or "unknown"
+	local team=plr.Team and plr.Team.Name or "None"
+
+	statsLabel.Text="Team: "..team.."  HP: "..health.."\nPos: "..pos
+
+	bringBtn.TextColor3=COL_ACCENT
+	bringBtn.BackgroundColor3=COL_ACCENT_DIM
+	setStatus("player found",COL_ACCENT)
+end
+
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local txt=searchBox.Text
+	target=findplr(txt)
+	if not target then
+		setStatus(txt=="" and "ready" or "no match")
+	end
+	updateCard(target)
+end)
+
+plrs.PlayerRemoving:Connect(function(plr)
+	others[plr]=nil
+	if plr==target then
+		target=nil
+		updateCard(nil)
+		setStatus("player left")
+	end
+end)
+
+-- Bring logic
+local bringing=false
+local notifyid=0
+local function notify(txt,col)
+	notifyid=notifyid+1
+	local thisid=notifyid
+	setStatus(txt,col)
+	twait(2)
+	if notifyid==thisid then
+		setStatus(target and "player found" or "ready",target and COL_ACCENT or nil)
 	end
 end
 
-local function addPlayer(p)
-	if p==lp then return end
+bringBtn.MouseButton1Click:Connect(function()
+	if bringing then
+		bringing=false
+		bringBtn.Text="BRING"
+		bringBtn.BackgroundColor3=COL_ACCENT_DIM
+		setStatus("cancelled")
+		return
+	end
+	if not target then return end
+	local c=lp.Character
+	local c1=target.Character
+	if not (c and c1) then return notify("no character",c3(255,100,100)) end
+	if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then
+		return notify("char not in workspace",c3(255,100,100))
+	end
+	local hrp=gp(c,"HumanoidRootPart","BasePart")
+	local hrp1=gp(c1,"HumanoidRootPart","BasePart")
+	if not (hrp and hrp1) then return notify("no HRP",c3(255,100,100)) end
 
-	local row=i("Frame")
-	row.Size=u2(1,0,0,32)
-	row.BackgroundColor3=c3(0.25,0.25,0.25)
-	row.BorderSizePixel=0
-	row.Parent=list
+	bringing=true
+	bringBtn.Text="STOP"
+	bringBtn.BackgroundColor3=c3(58,30,30)
+	bringBtn.TextColor3=c3(255,100,100)
+	setStatus("bringing "..target.DisplayName.."...",COL_ACCENT)
 
-	local name=i("TextLabel")
-	name.Size=u2(0.65,0,1,0)
-	name.BackgroundTransparency=1
-	name.Text=p.DisplayName.." @"..p.Name
-	name.TextColor3=c3(1,1,1)
-	name.Parent=row
+	local from=hrp1.CFrame
+	local fromP=from.Position
+	local to=hrp.CFrame
+	local toP=to.Position
+	local mag=(fromP-toP).Magnitude-3
+	local lv=cf(fromP,toP).LookVector
+	local vel=0
+	local pos=from.Position-v3_010*2
+	toP=toP-v3_010*2
 
-	local btn=i("TextButton")
-	btn.Size=u2(0.3,0,0.8,0)
-	btn.Position=u2(0.68,0,0.1,0)
-	btn.Text="BRING"
-	btn.Parent=row
-
-	btn.MouseButton1Click:Connect(function()
-		local c=lp.Character
-		local c1=p.Character
-		if not (c and c1) then return end
-
-		local hrp=gp(c,"HumanoidRootPart","BasePart")
-		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
-		if not (hrp and hrp1) then return end
-
-		local from=hrp1.CFrame
-		local fromP=from.Position
-		local to=hrp.CFrame
-		local toP=to.Position
-
-		local mag=(fromP-toP).Magnitude-3
-		local lv=cf(fromP,toP).LookVector
-		local vel=0
-		local pos=from.Position-v3_010*2
-		toP=toP-v3_010*2
-
-		local sine=osclock()
-		local lastsine=sine
-		local way=0
-		local reachedmaxspeed=false
-
-		while c:IsDescendantOf(ws) and c1:IsDescendantOf(ws) do
-			sine=osclock()
-			local deltaTime=sine-lastsine
-			lastsine=sine
-
-			if reachedmaxspeed then
-				if mag-way<reachedmaxspeed then
-					vel=vel-deltaTime*speeding
-					if vel<0 then break end
-				end
+	local sine=osclock()
+	local lastsine=sine
+	local way=0
+	local reachedmaxspeed=false
+	while bringing and c:IsDescendantOf(ws) and c1:IsDescendantOf(ws) do
+		sine=osclock()
+		local dt=sine-lastsine
+		lastsine=sine
+		if reachedmaxspeed then
+			if mag-way<reachedmaxspeed then
+				vel=vel-dt*speeding
+				if vel<0 then break end
+			end
+		else
+			if way>mag/2 then
+				vel=vel-dt*speeding
+				if vel<0 then break end
 			else
-				if way>mag/2 then
-					vel=vel-deltaTime*speeding
-					if vel<0 then break end
-				else
-					vel=vel+deltaTime*speeding
-					if vel>maxspeed then
-						reachedmaxspeed=way
-						vel=maxspeed
-					end
+				vel=vel+dt*speeding
+				if vel>maxspeed then
+					reachedmaxspeed=way
+					vel=maxspeed
 				end
 			end
-
-			way=way+vel*deltaTime
-
-			if hrp then
-				hrp.CFrame=cf(pos+lv*way,toP)*off
-				hrp.Velocity=lv*(vel+1)
-				hrp.RotVelocity=v3_0
-			end
-
-			twait()
 		end
-
-		if hrp then
-			hrp.CFrame=to
-			hrp.Velocity=v3_0
-			hrp.RotVelocity=v3_0
+		way=way+vel*dt
+		if not hrp:IsGrounded() then
+			hrp.CFrame=cf(pos+lv*way,toP)*off
+			hrp.AssemblyLinearVelocity=lv*(vel+1)
+			hrp.AssemblyAngularVelocity=v3_0
 		end
-	end)
-end
-
-local function refresh()
-	clear()
-	for _,p in ipairs(plrs:GetPlayers()) do
-		addPlayer(p)
+		twait()
 	end
+	hrp.CFrame=to
+	hrp.AssemblyLinearVelocity=v3_0
+	hrp.AssemblyAngularVelocity=v3_0
+	bringing=false
+	bringBtn.Text="BRING"
+	bringBtn.BackgroundColor3=COL_ACCENT_DIM
+	bringBtn.TextColor3=COL_ACCENT
+	notify("brought!",COL_ACCENT)
+end)
+
+-- Close / Open toggle
+closeBtn.MouseButton1Click:Connect(function()
+	panel.Visible=false
+	openBtn.Visible=true
+end)
+openBtn.MouseButton1Click:Connect(function()
+	panel.Visible=true
+	openBtn.Visible=false
+end)
+
+-- Insert GUI
+local ok=pcall(function()
+	gui.Parent=game:FindFirstChildOfClass("CoreGui")
+end)
+if not ok then
+	gui.Parent=lp:FindFirstChildOfClass("PlayerGui")
 end
-
-plrs.PlayerAdded:Connect(refresh)
-plrs.PlayerRemoving:Connect(refresh)
-
-refresh()
-gui.Parent=lp:WaitForChild("PlayerGui")
