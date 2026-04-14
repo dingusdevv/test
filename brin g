@@ -75,10 +75,8 @@ local function stroke(p,col,th)
 	s.ApplyStrokeMode=en.ApplyStrokeMode.Border s.Parent=p
 end
 
--- ScreenGui
 local gui=mk("ScreenGui",{Name=rstr(),ResetOnSpawn=false,ZIndexBehavior=en.ZIndexBehavior.Sibling})
 
--- Edge open tab
 local openTab=mk("TextButton",{
 	AnchorPoint=v2(0,0.5),Position=u2(0,0,0.5,0),
 	Size=u2(0,20,0,60),BackgroundColor3=C.sidebar,
@@ -87,14 +85,12 @@ local openTab=mk("TextButton",{
 },gui)
 corner(openTab,4) stroke(openTab)
 
--- Main window (taller to fit float row)
 local win=mk("Frame",{
 	AnchorPoint=v2(0.5,0.5),Position=u2(0.5,0,0.5,0),
 	Size=u2(0,540,0,420),BackgroundColor3=C.bg,BorderSizePixel=0,
 },gui)
 corner(win,8) stroke(win)
 
--- Title bar
 local titleBar=mk("Frame",{
 	Size=u2(1,0,0,34),BackgroundColor3=C.sidebar,BorderSizePixel=0,
 },win)
@@ -112,7 +108,6 @@ local closeBtn=mk("TextButton",{
 },titleBar)
 corner(closeBtn,7)
 
--- Sidebar
 local sidebar=mk("Frame",{
 	Position=u2(0,0,0,34),Size=u2(0,130,1,-34),
 	BackgroundColor3=C.sidebar,BorderSizePixel=0,
@@ -120,7 +115,6 @@ local sidebar=mk("Frame",{
 mk("Frame",{AnchorPoint=v2(1,0),Position=u2(1,0,0,0),Size=u2(0,1,1,0),BackgroundColor3=C.border,BorderSizePixel=0},sidebar)
 mk("Frame",{AnchorPoint=v2(1,0),Position=u2(1,0,0,0),Size=u2(0,8,1,0),BackgroundColor3=C.sidebar,BorderSizePixel=0},win)
 
--- Avatar box
 local avatarBox=mk("Frame",{
 	AnchorPoint=v2(0.5,0),Position=u2(0.5,0,0,14),
 	Size=u2(0,90,0,90),BackgroundColor3=C.surface,BorderSizePixel=0,
@@ -131,14 +125,12 @@ local avatarLetter=mk("TextLabel",{
 	Text="?",TextColor3=C.muted,TextSize=30,Font=en.Font.GothamBold,
 },avatarBox)
 
--- Content
 local content=mk("Frame",{
 	Position=u2(0,130,0,34),Size=u2(1,-130,1,-34),
 	BackgroundTransparency=1,BorderSizePixel=0,
 },win)
 pad(content,14,14,14,14)
 
--- Name pill
 local namePill=mk("Frame",{
 	Position=u2(0,0,0,0),Size=u2(0,220,0,42),
 	BackgroundColor3=C.btn,BorderSizePixel=0,
@@ -156,7 +148,6 @@ local searchBox=mk("TextBox",{
 },namePill)
 pad(searchBox,0,8,0,8)
 
--- Info rows
 local infoBlock=mk("Frame",{
 	Position=u2(0,0,0,52),Size=u2(1,0,0,108),
 	BackgroundTransparency=1,BorderSizePixel=0,Visible=false,
@@ -180,7 +171,6 @@ for idx,label in ipairs(statDefs) do
 	},row)
 end
 
--- Speed assist checkbox + speed +/-
 local speedRow=mk("Frame",{
 	Position=u2(0,0,1,-178),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -200,7 +190,6 @@ mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },speedRow)
 
--- Speed power row
 local speedPowerRow=mk("Frame",{
 	Position=u2(0,0,1,-150),Size=u2(0,220,0,18),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -228,7 +217,6 @@ local spPlusBtn=mk("TextButton",{
 },speedPowerRow)
 corner(spPlusBtn,4) stroke(spPlusBtn)
 
--- Jump assist checkbox
 local jumpRow=mk("Frame",{
 	Position=u2(0,0,1,-128),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -248,7 +236,6 @@ mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },jumpRow)
 
--- Jump power row
 local powerRow=mk("Frame",{
 	Position=u2(0,0,1,-100),Size=u2(0,220,0,18),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -276,7 +263,6 @@ local plusBtn=mk("TextButton",{
 },powerRow)
 corner(plusBtn,4) stroke(plusBtn)
 
--- ── FLOAT checkbox (new) ──
 local floatRow=mk("Frame",{
 	Position=u2(0,0,1,-78),Size=u2(0,220,0,26),
 	BackgroundTransparency=1,BorderSizePixel=0,
@@ -296,7 +282,6 @@ mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },floatRow)
 
--- Bring button
 local bringBtn=mk("TextButton",{
 	Position=u2(0,0,1,-48),Size=u2(0,190,0,38),
 	BackgroundColor3=C.btn,BorderSizePixel=0,
@@ -304,7 +289,6 @@ local bringBtn=mk("TextButton",{
 },content)
 corner(bringBtn,6) stroke(bringBtn,c3(200,200,200))
 
--- Status
 local statusLabel=mk("TextLabel",{
 	AnchorPoint=v2(0,1),Position=u2(0,0,1,-2),Size=u2(1,0,0,14),
 	BackgroundTransparency=1,Text="by MyWorld",
@@ -312,7 +296,6 @@ local statusLabel=mk("TextLabel",{
 	TextXAlignment=en.TextXAlignment.Left,
 },content)
 
--- State
 local speedEnabled=false
 local speedPower=75
 local jumpEnabled=false
@@ -353,7 +336,6 @@ floatCheckbox.MouseButton1Click:Connect(function()
 	floatCheckbox.BackgroundColor3=floatEnabled and C.accentDim or C.surface
 end)
 
--- Draggable
 local function Draggable(window,obj)
 	local MB1enum=en.UserInputType.MouseButton1
 	local TOUCHenum=en.UserInputType.Touch
@@ -419,7 +401,6 @@ local function Draggable(window,obj)
 end
 Draggable(win,titleBar)
 
--- Players
 local others={}
 for _,v in pairs(plrs:GetPlayers()) do if v~=lp then others[v]=true end end
 plrs.PlayerAdded:Connect(function(p) if p~=lp then others[p]=true end end)
@@ -497,7 +478,6 @@ plrs.PlayerRemoving:Connect(function(plr)
 	if plr==target then target=nil updateCard(nil) statusLabel.Text="player left" end
 end)
 
--- ── BRING ──
 local bringing=false
 
 bringBtn.MouseButton1Click:Connect(function()
@@ -575,7 +555,6 @@ bringBtn.MouseButton1Click:Connect(function()
 	bringBtn.TextColor3=C.btnText
 end)
 
--- ── SPEED ASSIST ──
 local assisting=false
 
 task.spawn(function()
@@ -681,10 +660,7 @@ task.spawn(function()
 	end
 end)
 
--- ── JUMP ASSIST (rewritten) ──
--- Tracks the target through the full jump arc by mirroring their Y each frame.
--- Works alongside speed assist since it only touches Y velocity/position.
-local jumpActive=false  -- true while we are inside a tracked jump
+local jumpActive=false
 
 task.spawn(function()
 	while true do
@@ -702,11 +678,9 @@ task.spawn(function()
 		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
 		if not (hrp and hrp1) then continue end
 
-		-- Detect jump start: target moving upward and we haven't started a track yet
 		if not jumpActive and hrp1.Velocity.Y > 1 then
 			jumpActive=true
 			task.spawn(function()
-				-- Track continuously until they land (velocity Y goes negative and near ground)
 				while jumpEnabled and target and not bringing do
 					local ch=lp.Character
 					local ch1=target and target.Character
@@ -715,12 +689,10 @@ task.spawn(function()
 					local r1=gp(ch1,"HumanoidRootPart","BasePart")
 					if not (r and r1) then break end
 
-					-- Place us exactly under their feet every frame
 					local footY=r1.Position.Y - r1.Size.Y/2 - 0.1
 					local tx=r1.Position.X
 					local tz=r1.Position.Z
 
-					-- Mirror their vertical velocity so we keep up through lag
 					local targetVY=r1.Velocity.Y
 					r.CFrame=cf(v3(tx, footY, tz))
 					r.Velocity=v3(r.Velocity.X, targetVY, r.Velocity.Z)
@@ -728,9 +700,7 @@ task.spawn(function()
 
 					twait()
 
-					-- Exit once they've peaked and landed (Y velocity clearly negative)
 					if r1.Velocity.Y < -2 then
-						-- Give a couple more frames to catch the landing
 						twait()
 						twait()
 						break
@@ -742,15 +712,11 @@ task.spawn(function()
 	end
 end)
 
--- ── FLOAT (new) ──
--- Continuously snaps local HRP to just below the target's feet.
--- Yields while jump assist is active so they don't fight each other.
 task.spawn(function()
 	while true do
 		twait()
 		if not floatEnabled or not target or bringing then continue end
 
-		-- Let jump assist own the frame while a jump is tracked
 		if jumpActive then continue end
 
 		local c=lp.Character
@@ -763,12 +729,11 @@ task.spawn(function()
 
 		local footY=hrp1.Position.Y - hrp1.Size.Y/2 - 0.1
 		hrp.CFrame=cf(v3(hrp1.Position.X, footY, hrp1.Position.Z))
-		hrp.Velocity=hrp1.Velocity  -- inherit target velocity so we don't fall behind
+		hrp.Velocity=hrp1.Velocity
 		hrp.RotVelocity=v3_0
 	end
 end)
 
--- close / open
 closeBtn.MouseButton1Click:Connect(function()
 	win.Visible=false openTab.Visible=true
 	if bringing then
