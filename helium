@@ -1,0 +1,21 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGuieqwd = Instance.new("ScreenGui")
+local wqewqe = Instance.new("Frame")
+
+--Properties:
+
+ScreenGuieqwd.Name = "ScreenGuieqwd"
+ScreenGuieqwd.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGuieqwd.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+wqewqe.Name = "wqewqe"
+wqewqe.Parent = ScreenGuieqwd
+wqewqe.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+wqewqe.BorderColor3 = Color3.fromRGB(0, 0, 0)
+wqewqe.BorderSizePixel = 0
+wqewqe.Position = UDim2.new(0.453959495, 0, 0.41166079, 0)
+wqewqe.Size = UDim2.new(0, 100, 0, 100)
