@@ -22,6 +22,12 @@ local punish = Instance.new("TextButton")
 local Spawnship = Instance.new("TextButton")
 local SpawnshipLoop = Instance.new("TextButton")
 local ws = Instance.new("TextButton")
+local wspow = Instance.new("TextButton")
+local Spawnspace = Instance.new("TextButton")
+local Spawnspaceloop = Instance.new("TextButton")
+local wslight = Instance.new("TextButton")
+local wsgui = Instance.new("TextButton")
+local wstools = Instance.new("TextButton")
 
 --Properties:
 
@@ -72,7 +78,7 @@ ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ScrollingFrame.BorderSizePixel = 0
 ScrollingFrame.Position = UDim2.new(0.068965517, 0, 0.172727272, 0)
 ScrollingFrame.Size = UDim2.new(0, 203, 0, 204)
-ScrollingFrame.CanvasPosition = Vector2.new(0, 102)
+ScrollingFrame.CanvasPosition = Vector2.new(0, 215)
 
 Delete.Name = "Delete"
 Delete.Parent = ScrollingFrame
@@ -199,7 +205,7 @@ punish.Parent = ScrollingFrame
 punish.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 punish.BorderColor3 = Color3.fromRGB(0, 0, 0)
 punish.BorderSizePixel = 0
-punish.Position = UDim2.new(0.507389188, 0, 0.322727263, 0)
+punish.Position = UDim2.new(0.0541872643, 0, 0.5, 0)
 punish.Size = UDim2.new(0, 82, 0, 28)
 punish.Font = Enum.Font.SourceSans
 punish.Text = "Punish"
@@ -238,20 +244,92 @@ ws.BorderSizePixel = 0
 ws.Position = UDim2.new(0.0591133013, 0, 0.322727263, 0)
 ws.Size = UDim2.new(0, 82, 0, 28)
 ws.Font = Enum.Font.SourceSans
-ws.Text = "Destroy WS"
+ws.Text = "Destroy (weak)"
 ws.TextColor3 = Color3.fromRGB(0, 0, 0)
 ws.TextSize = 14.000
 
+wspow.Name = "wspow"
+wspow.Parent = ScrollingFrame
+wspow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+wspow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+wspow.BorderSizePixel = 0
+wspow.Position = UDim2.new(0.507389128, 0, 0.322727263, 0)
+wspow.Size = UDim2.new(0, 82, 0, 28)
+wspow.Font = Enum.Font.SourceSans
+wspow.Text = "Destroy (strong)"
+wspow.TextColor3 = Color3.fromRGB(0, 0, 0)
+wspow.TextSize = 14.000
+
+Spawnspace.Name = "Spawnspace"
+Spawnspace.Parent = ScrollingFrame
+Spawnspace.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Spawnspace.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspace.BorderSizePixel = 0
+Spawnspace.Position = UDim2.new(0.0591132976, 0, 0.440909088, 0)
+Spawnspace.Size = UDim2.new(0, 82, 0, 28)
+Spawnspace.Font = Enum.Font.SourceSans
+Spawnspace.Text = "Space Buggy"
+Spawnspace.TextColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspace.TextSize = 14.000
+
+Spawnspaceloop.Name = "Spawnspaceloop"
+Spawnspaceloop.Parent = ScrollingFrame
+Spawnspaceloop.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Spawnspaceloop.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspaceloop.BorderSizePixel = 0
+Spawnspaceloop.Position = UDim2.new(0.507389069, 0, 0.439393938, 0)
+Spawnspaceloop.Size = UDim2.new(0, 82, 0, 28)
+Spawnspaceloop.Font = Enum.Font.SourceSans
+Spawnspaceloop.Text = " Buggy Loop"
+Spawnspaceloop.TextColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspaceloop.TextSize = 14.000
+
+wslight.Name = "wslight"
+wslight.Parent = ScrollingFrame
+wslight.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+wslight.BorderColor3 = Color3.fromRGB(0, 0, 0)
+wslight.BorderSizePixel = 0
+wslight.Position = UDim2.new(0.502463043, 0, 0.5, 0)
+wslight.Size = UDim2.new(0, 82, 0, 28)
+wslight.Font = Enum.Font.SourceSans
+wslight.Text = "Destroy Lighting"
+wslight.TextColor3 = Color3.fromRGB(0, 0, 0)
+wslight.TextSize = 14.000
+
+wsgui.Name = "wsgui"
+wsgui.Parent = ScrollingFrame
+wsgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+wsgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
+wsgui.BorderSizePixel = 0
+wsgui.Position = UDim2.new(0.0591132976, 0, 0.559090912, 0)
+wsgui.Size = UDim2.new(0, 82, 0, 28)
+wsgui.Font = Enum.Font.SourceSans
+wsgui.Text = "Destroy GUI"
+wsgui.TextColor3 = Color3.fromRGB(0, 0, 0)
+wsgui.TextSize = 14.000
+
+wstools.Name = "wstools"
+wstools.Parent = ScrollingFrame
+wstools.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+wstools.BorderColor3 = Color3.fromRGB(0, 0, 0)
+wstools.BorderSizePixel = 0
+wstools.Position = UDim2.new(0.502463043, 0, 0.559090912, 0)
+wstools.Size = UDim2.new(0, 82, 0, 28)
+wstools.Font = Enum.Font.SourceSans
+wstools.Text = "Destroy Tools"
+wstools.TextColor3 = Color3.fromRGB(0, 0, 0)
+wstools.TextSize = 14.000
+
 -- Scripts:
 
-local function NKYJY_fake_script() -- harked.LocalScript 
+local function OMFJZO_fake_script() -- harked.LocalScript 
 	local script = Instance.new('LocalScript', harked)
 
 	script.Parent.Draggable = true
 	script.Parent.Active = true
 end
-coroutine.wrap(NKYJY_fake_script)()
-local function ZVYUCI_fake_script() -- Delete.LocalScript 
+coroutine.wrap(OMFJZO_fake_script)()
+local function UVNMJ_fake_script() -- Delete.LocalScript 
 	local script = Instance.new('LocalScript', Delete)
 
 	local player = game.Players.LocalPlayer
@@ -272,8 +350,8 @@ local function ZVYUCI_fake_script() -- Delete.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ZVYUCI_fake_script)()
-local function ZDWLBY_fake_script() -- Bald.LocalScript 
+coroutine.wrap(UVNMJ_fake_script)()
+local function DGLPX_fake_script() -- Bald.LocalScript 
 	local script = Instance.new('LocalScript', Bald)
 
 	local Players = game:GetService("Players")
@@ -305,8 +383,8 @@ local function ZDWLBY_fake_script() -- Bald.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ZDWLBY_fake_script)()
-local function XYYOELW_fake_script() -- Kill.LocalScript 
+coroutine.wrap(DGLPX_fake_script)()
+local function MIFIRU_fake_script() -- Kill.LocalScript 
 	local script = Instance.new('LocalScript', Kill)
 
 	local Players = game:GetService("Players")
@@ -354,8 +432,8 @@ local function XYYOELW_fake_script() -- Kill.LocalScript
 		end
 	end)
 end
-coroutine.wrap(XYYOELW_fake_script)()
-local function FKCRL_fake_script() -- Naked.LocalScript 
+coroutine.wrap(MIFIRU_fake_script)()
+local function IIBYPFA_fake_script() -- Naked.LocalScript 
 	local script = Instance.new('LocalScript', Naked)
 
 	local Players = game:GetService("Players")
@@ -392,8 +470,8 @@ local function FKCRL_fake_script() -- Naked.LocalScript
 		end
 	end)
 end
-coroutine.wrap(FKCRL_fake_script)()
-local function YNHY_fake_script() -- Ban.LocalScript 
+coroutine.wrap(IIBYPFA_fake_script)()
+local function ULIKH_fake_script() -- Ban.LocalScript 
 	local script = Instance.new('LocalScript', Ban)
 
 	local Players = game:GetService("Players")
@@ -430,8 +508,8 @@ local function YNHY_fake_script() -- Ban.LocalScript
 		end)
 	end)
 end
-coroutine.wrap(YNHY_fake_script)()
-local function QASKX_fake_script() -- Kick.LocalScript 
+coroutine.wrap(ULIKH_fake_script)()
+local function PTQTIK_fake_script() -- Kick.LocalScript 
 	local script = Instance.new('LocalScript', Kick)
 
 	local Players = game:GetService("Players")
@@ -459,8 +537,8 @@ local function QASKX_fake_script() -- Kick.LocalScript
 		end
 	end)
 end
-coroutine.wrap(QASKX_fake_script)()
-local function JDETNAE_fake_script() -- Ragdoll.LocalScript 
+coroutine.wrap(PTQTIK_fake_script)()
+local function WIAXGY_fake_script() -- Ragdoll.LocalScript 
 	local script = Instance.new('LocalScript', Ragdoll)
 
 	local Players = game:GetService("Players")
@@ -491,8 +569,8 @@ local function JDETNAE_fake_script() -- Ragdoll.LocalScript
 		end
 	end)
 end
-coroutine.wrap(JDETNAE_fake_script)()
-local function NDTELE_fake_script() -- Noanims.LocalScript 
+coroutine.wrap(WIAXGY_fake_script)()
+local function DQDZ_fake_script() -- Noanims.LocalScript 
 	local script = Instance.new('LocalScript', Noanims)
 
 	local Players = game:GetService("Players")
@@ -523,8 +601,8 @@ local function NDTELE_fake_script() -- Noanims.LocalScript
 		end
 	end)
 end
-coroutine.wrap(NDTELE_fake_script)()
-local function HBJT_fake_script() -- notools.LocalScript 
+coroutine.wrap(DQDZ_fake_script)()
+local function ODIHEOF_fake_script() -- notools.LocalScript 
 	local script = Instance.new('LocalScript', notools)
 
 	local Players = game:GetService("Players")
@@ -557,8 +635,8 @@ local function HBJT_fake_script() -- notools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(HBJT_fake_script)()
-local function HICK_fake_script() -- nolimbs.LocalScript 
+coroutine.wrap(ODIHEOF_fake_script)()
+local function TLXX_fake_script() -- nolimbs.LocalScript 
 	local script = Instance.new('LocalScript', nolimbs)
 
 	local Players = game:GetService("Players")
@@ -609,8 +687,8 @@ local function HICK_fake_script() -- nolimbs.LocalScript
 		cleanCharacter(targetPlayer.Character)
 	end)
 end
-coroutine.wrap(HICK_fake_script)()
-local function SPIOH_fake_script() -- punish.LocalScript 
+coroutine.wrap(TLXX_fake_script)()
+local function BGSOX_fake_script() -- punish.LocalScript 
 	local script = Instance.new('LocalScript', punish)
 
 	local Players = game:GetService("Players")
@@ -675,8 +753,8 @@ local function SPIOH_fake_script() -- punish.LocalScript
 		sendForDeletion(targetPlayer.Character)
 	end)
 end
-coroutine.wrap(SPIOH_fake_script)()
-local function EGVFBBR_fake_script() -- Spawnship.LocalScript 
+coroutine.wrap(BGSOX_fake_script)()
+local function KULJGKI_fake_script() -- Spawnship.LocalScript 
 	local script = Instance.new('LocalScript', Spawnship)
 
 	script.Parent.Activated:Connect(function()
@@ -686,8 +764,8 @@ local function EGVFBBR_fake_script() -- Spawnship.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(EGVFBBR_fake_script)()
-local function VPZTXK_fake_script() -- SpawnshipLoop.LocalScript 
+coroutine.wrap(KULJGKI_fake_script)()
+local function NMJVD_fake_script() -- SpawnshipLoop.LocalScript 
 	local script = Instance.new('LocalScript', SpawnshipLoop)
 
 	local running = false
@@ -704,8 +782,8 @@ local function VPZTXK_fake_script() -- SpawnshipLoop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(VPZTXK_fake_script)()
-local function LZFA_fake_script() -- ws.LocalScript 
+coroutine.wrap(NMJVD_fake_script)()
+local function XLAP_fake_script() -- ws.LocalScript 
 	local script = Instance.new('LocalScript', ws)
 
 	local Players = game:GetService("Players")
@@ -727,4 +805,118 @@ local function LZFA_fake_script() -- ws.LocalScript
 		end
 	end)
 end
-coroutine.wrap(LZFA_fake_script)()
+coroutine.wrap(XLAP_fake_script)()
+local function RCRYF_fake_script() -- wspow.LocalScript 
+	local script = Instance.new('LocalScript', wspow)
+
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local remote = ReplicatedStorage:WaitForChild("DeleteCar")
+	
+	local button = script.Parent
+	
+	button.MouseButton1Click:Connect(function()
+		for _, v in ipairs(game:GetDescendants()) do
+			remote:FireServer(v)
+		end
+	end)
+end
+coroutine.wrap(RCRYF_fake_script)()
+local function YAEKRI_fake_script() -- Spawnspace.LocalScript 
+	local script = Instance.new('LocalScript', Spawnspace)
+
+	script.Parent.Activated:Connect(function()
+		local args = {
+			"Space Buggy"
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
+	end)
+end
+coroutine.wrap(YAEKRI_fake_script)()
+local function SXDX_fake_script() -- Spawnspaceloop.LocalScript 
+	local script = Instance.new('LocalScript', Spawnspaceloop)
+
+	local running = false
+	
+	script.Parent.Activated:Connect(function()
+		running = not running
+	
+		while running do
+			wait(0.3)
+			local args = {
+				"Space Buggy"
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
+		end
+	end)
+end
+coroutine.wrap(SXDX_fake_script)()
+local function KLVL_fake_script() -- wslight.LocalScript 
+	local script = Instance.new('LocalScript', wslight)
+
+	local Lighting = game:GetService("Lighting")
+	
+	local button = script.Parent
+	
+	button.MouseButton1Click:Connect(function()
+		for _, v in ipairs(Lighting:GetDescendants()) do
+			v:Destroy()
+		end
+	end)
+end
+coroutine.wrap(KLVL_fake_script)()
+local function MGIKORC_fake_script() -- wsgui.LocalScript 
+	local script = Instance.new('LocalScript', wsgui)
+
+	local Players = game:GetService("Players")
+	local StarterGui = game:GetService("StarterGui")
+	
+	local button = script.Parent
+	
+	local function cleanGui(container)
+		for _, v in ipairs(container:GetDescendants()) do
+			if not (v:IsA("ScreenGui") and v.Name == "mercuryGUI") then
+				v:Destroy()
+			end
+		end
+	end
+	
+	button.MouseButton1Click:Connect(function()
+		cleanGui(StarterGui)
+	
+		for _, player in ipairs(Players:GetPlayers()) do
+			local pg = player:FindFirstChild("PlayerGui")
+			if pg then
+				cleanGui(pg)
+			end
+		end
+	end)
+end
+coroutine.wrap(MGIKORC_fake_script)()
+local function ORMTB_fake_script() -- wstools.LocalScript 
+	local script = Instance.new('LocalScript', wstools)
+
+	local Players = game:GetService("Players")
+	local StarterPack = game:GetService("StarterPack")
+	
+	local button = script.Parent
+	
+	local function clean(container)
+		for _, v in ipairs(container:GetDescendants()) do
+			if not (v:IsA("Tool") and v.Name == "Delete Tool") then
+				v:Destroy()
+			end
+		end
+	end
+	
+	button.MouseButton1Click:Connect(function()
+		clean(StarterPack)
+	
+		for _, player in ipairs(Players:GetPlayers()) do
+			local backpack = player:FindFirstChild("Backpack")
+			if backpack then
+				clean(backpack)
+			end
+		end
+	end)
+end
+coroutine.wrap(ORMTB_fake_script)()
