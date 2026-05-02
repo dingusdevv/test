@@ -322,14 +322,14 @@ wstools.TextSize = 14.000
 
 -- Scripts:
 
-local function OMFJZO_fake_script() -- harked.LocalScript 
+local function CDNESFL_fake_script() -- harked.LocalScript 
 	local script = Instance.new('LocalScript', harked)
 
 	script.Parent.Draggable = true
 	script.Parent.Active = true
 end
-coroutine.wrap(OMFJZO_fake_script)()
-local function UVNMJ_fake_script() -- Delete.LocalScript 
+coroutine.wrap(CDNESFL_fake_script)()
+local function WJRQL_fake_script() -- Delete.LocalScript 
 	local script = Instance.new('LocalScript', Delete)
 
 	local player = game.Players.LocalPlayer
@@ -350,8 +350,8 @@ local function UVNMJ_fake_script() -- Delete.LocalScript
 		end
 	end)
 end
-coroutine.wrap(UVNMJ_fake_script)()
-local function DGLPX_fake_script() -- Bald.LocalScript 
+coroutine.wrap(WJRQL_fake_script)()
+local function VJBMO_fake_script() -- Bald.LocalScript 
 	local script = Instance.new('LocalScript', Bald)
 
 	local Players = game:GetService("Players")
@@ -383,8 +383,8 @@ local function DGLPX_fake_script() -- Bald.LocalScript
 		end
 	end)
 end
-coroutine.wrap(DGLPX_fake_script)()
-local function MIFIRU_fake_script() -- Kill.LocalScript 
+coroutine.wrap(VJBMO_fake_script)()
+local function CRFZKK_fake_script() -- Kill.LocalScript 
 	local script = Instance.new('LocalScript', Kill)
 
 	local Players = game:GetService("Players")
@@ -432,8 +432,8 @@ local function MIFIRU_fake_script() -- Kill.LocalScript
 		end
 	end)
 end
-coroutine.wrap(MIFIRU_fake_script)()
-local function IIBYPFA_fake_script() -- Naked.LocalScript 
+coroutine.wrap(CRFZKK_fake_script)()
+local function GQBLM_fake_script() -- Naked.LocalScript 
 	local script = Instance.new('LocalScript', Naked)
 
 	local Players = game:GetService("Players")
@@ -470,8 +470,8 @@ local function IIBYPFA_fake_script() -- Naked.LocalScript
 		end
 	end)
 end
-coroutine.wrap(IIBYPFA_fake_script)()
-local function ULIKH_fake_script() -- Ban.LocalScript 
+coroutine.wrap(GQBLM_fake_script)()
+local function DTNOGE_fake_script() -- Ban.LocalScript 
 	local script = Instance.new('LocalScript', Ban)
 
 	local Players = game:GetService("Players")
@@ -508,8 +508,8 @@ local function ULIKH_fake_script() -- Ban.LocalScript
 		end)
 	end)
 end
-coroutine.wrap(ULIKH_fake_script)()
-local function PTQTIK_fake_script() -- Kick.LocalScript 
+coroutine.wrap(DTNOGE_fake_script)()
+local function DVWDQ_fake_script() -- Kick.LocalScript 
 	local script = Instance.new('LocalScript', Kick)
 
 	local Players = game:GetService("Players")
@@ -537,8 +537,8 @@ local function PTQTIK_fake_script() -- Kick.LocalScript
 		end
 	end)
 end
-coroutine.wrap(PTQTIK_fake_script)()
-local function WIAXGY_fake_script() -- Ragdoll.LocalScript 
+coroutine.wrap(DVWDQ_fake_script)()
+local function LDCCY_fake_script() -- Ragdoll.LocalScript 
 	local script = Instance.new('LocalScript', Ragdoll)
 
 	local Players = game:GetService("Players")
@@ -569,8 +569,8 @@ local function WIAXGY_fake_script() -- Ragdoll.LocalScript
 		end
 	end)
 end
-coroutine.wrap(WIAXGY_fake_script)()
-local function DQDZ_fake_script() -- Noanims.LocalScript 
+coroutine.wrap(LDCCY_fake_script)()
+local function VWXA_fake_script() -- Noanims.LocalScript 
 	local script = Instance.new('LocalScript', Noanims)
 
 	local Players = game:GetService("Players")
@@ -601,8 +601,8 @@ local function DQDZ_fake_script() -- Noanims.LocalScript
 		end
 	end)
 end
-coroutine.wrap(DQDZ_fake_script)()
-local function ODIHEOF_fake_script() -- notools.LocalScript 
+coroutine.wrap(VWXA_fake_script)()
+local function EFYC_fake_script() -- notools.LocalScript 
 	local script = Instance.new('LocalScript', notools)
 
 	local Players = game:GetService("Players")
@@ -635,8 +635,8 @@ local function ODIHEOF_fake_script() -- notools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ODIHEOF_fake_script)()
-local function TLXX_fake_script() -- nolimbs.LocalScript 
+coroutine.wrap(EFYC_fake_script)()
+local function OZEBU_fake_script() -- nolimbs.LocalScript 
 	local script = Instance.new('LocalScript', nolimbs)
 
 	local Players = game:GetService("Players")
@@ -687,8 +687,8 @@ local function TLXX_fake_script() -- nolimbs.LocalScript
 		cleanCharacter(targetPlayer.Character)
 	end)
 end
-coroutine.wrap(TLXX_fake_script)()
-local function BGSOX_fake_script() -- punish.LocalScript 
+coroutine.wrap(OZEBU_fake_script)()
+local function SLLX_fake_script() -- punish.LocalScript 
 	local script = Instance.new('LocalScript', punish)
 
 	local Players = game:GetService("Players")
@@ -753,8 +753,8 @@ local function BGSOX_fake_script() -- punish.LocalScript
 		sendForDeletion(targetPlayer.Character)
 	end)
 end
-coroutine.wrap(BGSOX_fake_script)()
-local function KULJGKI_fake_script() -- Spawnship.LocalScript 
+coroutine.wrap(SLLX_fake_script)()
+local function WFNUMB_fake_script() -- Spawnship.LocalScript 
 	local script = Instance.new('LocalScript', Spawnship)
 
 	script.Parent.Activated:Connect(function()
@@ -764,8 +764,8 @@ local function KULJGKI_fake_script() -- Spawnship.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(KULJGKI_fake_script)()
-local function NMJVD_fake_script() -- SpawnshipLoop.LocalScript 
+coroutine.wrap(WFNUMB_fake_script)()
+local function WHDJAMV_fake_script() -- SpawnshipLoop.LocalScript 
 	local script = Instance.new('LocalScript', SpawnshipLoop)
 
 	local running = false
@@ -782,8 +782,8 @@ local function NMJVD_fake_script() -- SpawnshipLoop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(NMJVD_fake_script)()
-local function XLAP_fake_script() -- ws.LocalScript 
+coroutine.wrap(WHDJAMV_fake_script)()
+local function MGGPA_fake_script() -- ws.LocalScript 
 	local script = Instance.new('LocalScript', ws)
 
 	local Players = game:GetService("Players")
@@ -805,8 +805,8 @@ local function XLAP_fake_script() -- ws.LocalScript
 		end
 	end)
 end
-coroutine.wrap(XLAP_fake_script)()
-local function RCRYF_fake_script() -- wspow.LocalScript 
+coroutine.wrap(MGGPA_fake_script)()
+local function AQPGZLU_fake_script() -- wspow.LocalScript 
 	local script = Instance.new('LocalScript', wspow)
 
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -820,8 +820,8 @@ local function RCRYF_fake_script() -- wspow.LocalScript
 		end
 	end)
 end
-coroutine.wrap(RCRYF_fake_script)()
-local function YAEKRI_fake_script() -- Spawnspace.LocalScript 
+coroutine.wrap(AQPGZLU_fake_script)()
+local function DAIEWN_fake_script() -- Spawnspace.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspace)
 
 	script.Parent.Activated:Connect(function()
@@ -831,8 +831,8 @@ local function YAEKRI_fake_script() -- Spawnspace.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(YAEKRI_fake_script)()
-local function SXDX_fake_script() -- Spawnspaceloop.LocalScript 
+coroutine.wrap(DAIEWN_fake_script)()
+local function RTXTSE_fake_script() -- Spawnspaceloop.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspaceloop)
 
 	local running = false
@@ -849,33 +849,39 @@ local function SXDX_fake_script() -- Spawnspaceloop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(SXDX_fake_script)()
-local function KLVL_fake_script() -- wslight.LocalScript 
+coroutine.wrap(RTXTSE_fake_script)()
+local function VTDF_fake_script() -- wslight.LocalScript 
 	local script = Instance.new('LocalScript', wslight)
 
 	local Lighting = game:GetService("Lighting")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	
+	local remote = ReplicatedStorage:WaitForChild("DeleteCar")
 	
 	local button = script.Parent
 	
 	button.MouseButton1Click:Connect(function()
 		for _, v in ipairs(Lighting:GetDescendants()) do
-			v:Destroy()
+			remote:FireServer(v)
 		end
 	end)
 end
-coroutine.wrap(KLVL_fake_script)()
-local function MGIKORC_fake_script() -- wsgui.LocalScript 
+coroutine.wrap(VTDF_fake_script)()
+local function OSICVJI_fake_script() -- wsgui.LocalScript 
 	local script = Instance.new('LocalScript', wsgui)
 
 	local Players = game:GetService("Players")
 	local StarterGui = game:GetService("StarterGui")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	
+	local remote = ReplicatedStorage:WaitForChild("DeleteCar")
 	
 	local button = script.Parent
 	
 	local function cleanGui(container)
 		for _, v in ipairs(container:GetDescendants()) do
 			if not (v:IsA("ScreenGui") and v.Name == "mercuryGUI") then
-				v:Destroy()
+				remote:FireServer(v)
 			end
 		end
 	end
@@ -891,19 +897,22 @@ local function MGIKORC_fake_script() -- wsgui.LocalScript
 		end
 	end)
 end
-coroutine.wrap(MGIKORC_fake_script)()
-local function ORMTB_fake_script() -- wstools.LocalScript 
+coroutine.wrap(OSICVJI_fake_script)()
+local function MPFCOLN_fake_script() -- wstools.LocalScript 
 	local script = Instance.new('LocalScript', wstools)
 
 	local Players = game:GetService("Players")
 	local StarterPack = game:GetService("StarterPack")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	
+	local remote = ReplicatedStorage:WaitForChild("DeleteCar")
 	
 	local button = script.Parent
 	
 	local function clean(container)
 		for _, v in ipairs(container:GetDescendants()) do
 			if not (v:IsA("Tool") and v.Name == "Delete Tool") then
-				v:Destroy()
+				remote:FireServer(v)
 			end
 		end
 	end
@@ -919,4 +928,4 @@ local function ORMTB_fake_script() -- wstools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ORMTB_fake_script)()
+coroutine.wrap(MPFCOLN_fake_script)()
