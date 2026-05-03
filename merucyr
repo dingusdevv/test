@@ -28,6 +28,7 @@ local Spawnspaceloop = Instance.new("TextButton")
 local wslight = Instance.new("TextButton")
 local wsgui = Instance.new("TextButton")
 local wstools = Instance.new("TextButton")
+local sword = Instance.new("TextButton")
 
 --Properties:
 
@@ -42,7 +43,7 @@ harked.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
 harked.BackgroundTransparency = 0.400
 harked.BorderColor3 = Color3.fromRGB(255, 255, 255)
 harked.BorderSizePixel = 3
-harked.Position = UDim2.new(0.0377532244, 0, 0.181978792, 0)
+harked.Position = UDim2.new(0.447012484, 0, 0.0159010608, 0)
 harked.Size = UDim2.new(0, 232, 0, 330)
 
 TextLabel.Parent = harked
@@ -60,15 +61,17 @@ TextLabel.TextSize = 14.000
 TextLabel.TextWrapped = true
 
 TextBox.Parent = harked
-TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-TextBox.BorderSizePixel = 0
+TextBox.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+TextBox.BackgroundTransparency = 0.500
+TextBox.BorderColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.BorderSizePixel = 3
 TextBox.Position = UDim2.new(0.068965517, 0, 0.854545474, 0)
 TextBox.Size = UDim2.new(0, 200, 0, 39)
-TextBox.Font = Enum.Font.SourceSans
+TextBox.Font = Enum.Font.JosefinSans
+TextBox.PlaceholderColor3 = Color3.fromRGB(96, 96, 96)
 TextBox.PlaceholderText = "Player name"
 TextBox.Text = ""
-TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextBox.TextSize = 14.000
 
 ScrollingFrame.Parent = harked
@@ -79,269 +82,314 @@ ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ScrollingFrame.BorderSizePixel = 0
 ScrollingFrame.Position = UDim2.new(0.068965517, 0, 0.172727272, 0)
 ScrollingFrame.Size = UDim2.new(0, 203, 0, 204)
+ScrollingFrame.CanvasPosition = Vector2.new(0, 296)
 
 Delete.Name = "Delete"
 Delete.Parent = ScrollingFrame
-Delete.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Delete.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Delete.BorderSizePixel = 0
+Delete.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Delete.BackgroundTransparency = 0.400
+Delete.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Delete.BorderSizePixel = 3
 Delete.Position = UDim2.new(0.0591133013, 0, 0.0303030312, 0)
 Delete.Size = UDim2.new(0, 82, 0, 28)
-Delete.Font = Enum.Font.SourceSans
+Delete.Font = Enum.Font.JosefinSans
 Delete.Text = "Delete Tool"
-Delete.TextColor3 = Color3.fromRGB(0, 0, 0)
+Delete.TextColor3 = Color3.fromRGB(255, 255, 255)
 Delete.TextSize = 14.000
 
 Bald.Name = "Bald"
 Bald.Parent = ScrollingFrame
-Bald.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Bald.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Bald.BorderSizePixel = 0
+Bald.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Bald.BackgroundTransparency = 0.400
+Bald.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Bald.BorderSizePixel = 3
 Bald.Position = UDim2.new(0.511083722, 0, 0.0303030312, 0)
 Bald.Size = UDim2.new(0, 82, 0, 28)
-Bald.Font = Enum.Font.SourceSans
+Bald.Font = Enum.Font.JosefinSans
 Bald.Text = "Bald"
-Bald.TextColor3 = Color3.fromRGB(0, 0, 0)
+Bald.TextColor3 = Color3.fromRGB(255, 255, 255)
 Bald.TextSize = 14.000
 
 Kill.Name = "Kill"
 Kill.Parent = ScrollingFrame
-Kill.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Kill.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Kill.BorderSizePixel = 0
+Kill.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Kill.BackgroundTransparency = 0.400
+Kill.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Kill.BorderSizePixel = 3
 Kill.Position = UDim2.new(0.0591133013, 0, 0.0909090936, 0)
 Kill.Size = UDim2.new(0, 82, 0, 28)
-Kill.Font = Enum.Font.SourceSans
+Kill.Font = Enum.Font.JosefinSans
 Kill.Text = "Kill"
-Kill.TextColor3 = Color3.fromRGB(0, 0, 0)
+Kill.TextColor3 = Color3.fromRGB(255, 255, 255)
 Kill.TextSize = 14.000
 
 Naked.Name = "Naked"
 Naked.Parent = ScrollingFrame
-Naked.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Naked.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Naked.BorderSizePixel = 0
+Naked.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Naked.BackgroundTransparency = 0.400
+Naked.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Naked.BorderSizePixel = 3
 Naked.Position = UDim2.new(0.507389188, 0, 0.0909090936, 0)
 Naked.Size = UDim2.new(0, 82, 0, 28)
-Naked.Font = Enum.Font.SourceSans
+Naked.Font = Enum.Font.JosefinSans
 Naked.Text = "Naked"
-Naked.TextColor3 = Color3.fromRGB(0, 0, 0)
+Naked.TextColor3 = Color3.fromRGB(255, 255, 255)
 Naked.TextSize = 14.000
 
 Ban.Name = "Ban"
 Ban.Parent = ScrollingFrame
-Ban.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Ban.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Ban.BorderSizePixel = 0
+Ban.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Ban.BackgroundTransparency = 0.400
+Ban.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Ban.BorderSizePixel = 3
 Ban.Position = UDim2.new(0.507389188, 0, 0.151515156, 0)
 Ban.Size = UDim2.new(0, 82, 0, 28)
-Ban.Font = Enum.Font.SourceSans
+Ban.Font = Enum.Font.JosefinSans
 Ban.Text = "Ban"
-Ban.TextColor3 = Color3.fromRGB(0, 0, 0)
+Ban.TextColor3 = Color3.fromRGB(255, 255, 255)
 Ban.TextSize = 14.000
 
 Kick.Name = "Kick"
 Kick.Parent = ScrollingFrame
-Kick.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Kick.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Kick.BorderSizePixel = 0
+Kick.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Kick.BackgroundTransparency = 0.400
+Kick.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Kick.BorderSizePixel = 3
 Kick.Position = UDim2.new(0.0591133013, 0, 0.151515156, 0)
 Kick.Size = UDim2.new(0, 82, 0, 28)
-Kick.Font = Enum.Font.SourceSans
+Kick.Font = Enum.Font.JosefinSans
 Kick.Text = "Kick"
-Kick.TextColor3 = Color3.fromRGB(0, 0, 0)
+Kick.TextColor3 = Color3.fromRGB(255, 255, 255)
 Kick.TextSize = 14.000
 
 Ragdoll.Name = "Ragdoll"
 Ragdoll.Parent = ScrollingFrame
-Ragdoll.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Ragdoll.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Ragdoll.BorderSizePixel = 0
+Ragdoll.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Ragdoll.BackgroundTransparency = 0.400
+Ragdoll.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Ragdoll.BorderSizePixel = 3
 Ragdoll.Position = UDim2.new(0.507389188, 0, 0.209090903, 0)
 Ragdoll.Size = UDim2.new(0, 82, 0, 28)
-Ragdoll.Font = Enum.Font.SourceSans
+Ragdoll.Font = Enum.Font.JosefinSans
 Ragdoll.Text = "Ragdoll"
-Ragdoll.TextColor3 = Color3.fromRGB(0, 0, 0)
+Ragdoll.TextColor3 = Color3.fromRGB(255, 255, 255)
 Ragdoll.TextSize = 14.000
 
 Noanims.Name = "Noanims"
 Noanims.Parent = ScrollingFrame
-Noanims.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Noanims.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Noanims.BorderSizePixel = 0
+Noanims.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Noanims.BackgroundTransparency = 0.400
+Noanims.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Noanims.BorderSizePixel = 3
 Noanims.Position = UDim2.new(0.0591133013, 0, 0.209090903, 0)
 Noanims.Size = UDim2.new(0, 82, 0, 28)
-Noanims.Font = Enum.Font.SourceSans
+Noanims.Font = Enum.Font.JosefinSans
 Noanims.Text = "NoAnims"
-Noanims.TextColor3 = Color3.fromRGB(0, 0, 0)
+Noanims.TextColor3 = Color3.fromRGB(255, 255, 255)
 Noanims.TextSize = 14.000
 
 notools.Name = "notools"
 notools.Parent = ScrollingFrame
-notools.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-notools.BorderColor3 = Color3.fromRGB(0, 0, 0)
-notools.BorderSizePixel = 0
+notools.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+notools.BackgroundTransparency = 0.400
+notools.BorderColor3 = Color3.fromRGB(255, 255, 255)
+notools.BorderSizePixel = 3
 notools.Position = UDim2.new(0.0591133013, 0, 0.266666681, 0)
 notools.Size = UDim2.new(0, 82, 0, 28)
-notools.Font = Enum.Font.SourceSans
+notools.Font = Enum.Font.JosefinSans
 notools.Text = "NoTools"
-notools.TextColor3 = Color3.fromRGB(0, 0, 0)
+notools.TextColor3 = Color3.fromRGB(255, 255, 255)
 notools.TextSize = 14.000
 
 nolimbs.Name = "nolimbs"
 nolimbs.Parent = ScrollingFrame
-nolimbs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-nolimbs.BorderColor3 = Color3.fromRGB(0, 0, 0)
-nolimbs.BorderSizePixel = 0
+nolimbs.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+nolimbs.BackgroundTransparency = 0.400
+nolimbs.BorderColor3 = Color3.fromRGB(255, 255, 255)
+nolimbs.BorderSizePixel = 3
 nolimbs.Position = UDim2.new(0.507389188, 0, 0.266666681, 0)
 nolimbs.Size = UDim2.new(0, 82, 0, 28)
-nolimbs.Font = Enum.Font.SourceSans
+nolimbs.Font = Enum.Font.JosefinSans
 nolimbs.Text = "NoLimbs"
-nolimbs.TextColor3 = Color3.fromRGB(0, 0, 0)
+nolimbs.TextColor3 = Color3.fromRGB(255, 255, 255)
 nolimbs.TextSize = 14.000
 
 punish.Name = "punish"
 punish.Parent = ScrollingFrame
-punish.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-punish.BorderColor3 = Color3.fromRGB(0, 0, 0)
-punish.BorderSizePixel = 0
+punish.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+punish.BackgroundTransparency = 0.400
+punish.BorderColor3 = Color3.fromRGB(255, 255, 255)
+punish.BorderSizePixel = 3
 punish.Position = UDim2.new(0.0541872643, 0, 0.5, 0)
 punish.Size = UDim2.new(0, 82, 0, 28)
-punish.Font = Enum.Font.SourceSans
+punish.Font = Enum.Font.JosefinSans
 punish.Text = "Punish"
-punish.TextColor3 = Color3.fromRGB(0, 0, 0)
+punish.TextColor3 = Color3.fromRGB(255, 255, 255)
 punish.TextSize = 14.000
 
 Spawnship.Name = "Spawnship"
 Spawnship.Parent = ScrollingFrame
-Spawnship.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Spawnship.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Spawnship.BorderSizePixel = 0
+Spawnship.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Spawnship.BackgroundTransparency = 0.400
+Spawnship.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Spawnship.BorderSizePixel = 3
 Spawnship.Position = UDim2.new(0.0591133013, 0, 0.381818175, 0)
 Spawnship.Size = UDim2.new(0, 82, 0, 28)
-Spawnship.Font = Enum.Font.SourceSans
+Spawnship.Font = Enum.Font.JosefinSans
 Spawnship.Text = "Spawn Ship"
-Spawnship.TextColor3 = Color3.fromRGB(0, 0, 0)
+Spawnship.TextColor3 = Color3.fromRGB(255, 255, 255)
 Spawnship.TextSize = 14.000
 
 SpawnshipLoop.Name = "SpawnshipLoop"
 SpawnshipLoop.Parent = ScrollingFrame
-SpawnshipLoop.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-SpawnshipLoop.BorderColor3 = Color3.fromRGB(0, 0, 0)
-SpawnshipLoop.BorderSizePixel = 0
+SpawnshipLoop.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+SpawnshipLoop.BackgroundTransparency = 0.400
+SpawnshipLoop.BorderColor3 = Color3.fromRGB(255, 255, 255)
+SpawnshipLoop.BorderSizePixel = 3
 SpawnshipLoop.Position = UDim2.new(0.507389188, 0, 0.381818175, 0)
 SpawnshipLoop.Size = UDim2.new(0, 82, 0, 28)
-SpawnshipLoop.Font = Enum.Font.SourceSans
-SpawnshipLoop.Text = "Spawn Ship Loop"
-SpawnshipLoop.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpawnshipLoop.Font = Enum.Font.JosefinSans
+SpawnshipLoop.Text = "Ship Loop"
+SpawnshipLoop.TextColor3 = Color3.fromRGB(255, 255, 255)
 SpawnshipLoop.TextSize = 14.000
 
 ws.Name = "ws"
 ws.Parent = ScrollingFrame
-ws.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-ws.BorderColor3 = Color3.fromRGB(0, 0, 0)
-ws.BorderSizePixel = 0
+ws.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+ws.BackgroundTransparency = 0.400
+ws.BorderColor3 = Color3.fromRGB(255, 255, 255)
+ws.BorderSizePixel = 3
 ws.Position = UDim2.new(0.0591133013, 0, 0.322727263, 0)
 ws.Size = UDim2.new(0, 82, 0, 28)
-ws.Font = Enum.Font.SourceSans
-ws.Text = "Destroy (weak)"
-ws.TextColor3 = Color3.fromRGB(0, 0, 0)
+ws.Font = Enum.Font.JosefinSans
+ws.Text = "Destroy WS"
+ws.TextColor3 = Color3.fromRGB(255, 255, 255)
 ws.TextSize = 14.000
 
 wspow.Name = "wspow"
 wspow.Parent = ScrollingFrame
-wspow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-wspow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-wspow.BorderSizePixel = 0
+wspow.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+wspow.BackgroundTransparency = 0.400
+wspow.BorderColor3 = Color3.fromRGB(255, 255, 255)
+wspow.BorderSizePixel = 3
 wspow.Position = UDim2.new(0.507389128, 0, 0.322727263, 0)
 wspow.Size = UDim2.new(0, 82, 0, 28)
-wspow.Font = Enum.Font.SourceSans
-wspow.Text = "Destroy (strong)"
-wspow.TextColor3 = Color3.fromRGB(0, 0, 0)
+wspow.Font = Enum.Font.JosefinSans
+wspow.Text = "Destroy All"
+wspow.TextColor3 = Color3.fromRGB(255, 255, 255)
 wspow.TextSize = 14.000
 
 Spawnspace.Name = "Spawnspace"
 Spawnspace.Parent = ScrollingFrame
-Spawnspace.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Spawnspace.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Spawnspace.BorderSizePixel = 0
+Spawnspace.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Spawnspace.BackgroundTransparency = 0.400
+Spawnspace.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Spawnspace.BorderSizePixel = 3
 Spawnspace.Position = UDim2.new(0.0591132976, 0, 0.440909088, 0)
 Spawnspace.Size = UDim2.new(0, 82, 0, 28)
-Spawnspace.Font = Enum.Font.SourceSans
+Spawnspace.Font = Enum.Font.JosefinSans
 Spawnspace.Text = "Space Buggy"
-Spawnspace.TextColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspace.TextColor3 = Color3.fromRGB(255, 255, 255)
 Spawnspace.TextSize = 14.000
 
 Spawnspaceloop.Name = "Spawnspaceloop"
 Spawnspaceloop.Parent = ScrollingFrame
-Spawnspaceloop.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-Spawnspaceloop.BorderColor3 = Color3.fromRGB(0, 0, 0)
-Spawnspaceloop.BorderSizePixel = 0
+Spawnspaceloop.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+Spawnspaceloop.BackgroundTransparency = 0.400
+Spawnspaceloop.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Spawnspaceloop.BorderSizePixel = 3
 Spawnspaceloop.Position = UDim2.new(0.507389069, 0, 0.439393938, 0)
 Spawnspaceloop.Size = UDim2.new(0, 82, 0, 28)
-Spawnspaceloop.Font = Enum.Font.SourceSans
-Spawnspaceloop.Text = " Buggy Loop"
-Spawnspaceloop.TextColor3 = Color3.fromRGB(0, 0, 0)
+Spawnspaceloop.Font = Enum.Font.JosefinSans
+Spawnspaceloop.Text = "Buggy Loop"
+Spawnspaceloop.TextColor3 = Color3.fromRGB(255, 255, 255)
 Spawnspaceloop.TextSize = 14.000
 
 wslight.Name = "wslight"
 wslight.Parent = ScrollingFrame
-wslight.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-wslight.BorderColor3 = Color3.fromRGB(0, 0, 0)
-wslight.BorderSizePixel = 0
+wslight.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+wslight.BackgroundTransparency = 0.400
+wslight.BorderColor3 = Color3.fromRGB(255, 255, 255)
+wslight.BorderSizePixel = 3
 wslight.Position = UDim2.new(0.502463043, 0, 0.5, 0)
 wslight.Size = UDim2.new(0, 82, 0, 28)
-wslight.Font = Enum.Font.SourceSans
-wslight.Text = "Destroy Lighting"
-wslight.TextColor3 = Color3.fromRGB(0, 0, 0)
+wslight.Font = Enum.Font.JosefinSans
+wslight.Text = "Destroy Sky"
+wslight.TextColor3 = Color3.fromRGB(255, 255, 255)
 wslight.TextSize = 14.000
 
 wsgui.Name = "wsgui"
 wsgui.Parent = ScrollingFrame
-wsgui.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-wsgui.BorderColor3 = Color3.fromRGB(0, 0, 0)
-wsgui.BorderSizePixel = 0
+wsgui.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+wsgui.BackgroundTransparency = 0.400
+wsgui.BorderColor3 = Color3.fromRGB(255, 255, 255)
+wsgui.BorderSizePixel = 3
 wsgui.Position = UDim2.new(0.0591132976, 0, 0.559090912, 0)
 wsgui.Size = UDim2.new(0, 82, 0, 28)
-wsgui.Font = Enum.Font.SourceSans
+wsgui.Font = Enum.Font.JosefinSans
 wsgui.Text = "Destroy GUI"
-wsgui.TextColor3 = Color3.fromRGB(0, 0, 0)
+wsgui.TextColor3 = Color3.fromRGB(255, 255, 255)
 wsgui.TextSize = 14.000
 
 wstools.Name = "wstools"
 wstools.Parent = ScrollingFrame
-wstools.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-wstools.BorderColor3 = Color3.fromRGB(0, 0, 0)
-wstools.BorderSizePixel = 0
+wstools.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+wstools.BackgroundTransparency = 0.400
+wstools.BorderColor3 = Color3.fromRGB(255, 255, 255)
+wstools.BorderSizePixel = 3
 wstools.Position = UDim2.new(0.502463043, 0, 0.559090912, 0)
 wstools.Size = UDim2.new(0, 82, 0, 28)
-wstools.Font = Enum.Font.SourceSans
+wstools.Font = Enum.Font.JosefinSans
 wstools.Text = "Destroy Tools"
-wstools.TextColor3 = Color3.fromRGB(0, 0, 0)
+wstools.TextColor3 = Color3.fromRGB(255, 255, 255)
 wstools.TextSize = 14.000
+
+sword.Name = "sword"
+sword.Parent = ScrollingFrame
+sword.BackgroundColor3 = Color3.fromRGB(137, 138, 138)
+sword.BackgroundTransparency = 0.400
+sword.BorderColor3 = Color3.fromRGB(255, 255, 255)
+sword.BorderSizePixel = 3
+sword.Position = UDim2.new(0.50738889, 0, 0.618181825, 0)
+sword.Size = UDim2.new(0, 82, 0, 28)
+sword.Font = Enum.Font.JosefinSans
+sword.Text = "Sword"
+sword.TextColor3 = Color3.fromRGB(255, 255, 255)
+sword.TextSize = 14.000
 
 -- Scripts:
 
-local function OKYT_fake_script() -- harked.LocalScript 
+local function QGDW_fake_script() -- harked.LocalScript 
 	local script = Instance.new('LocalScript', harked)
 
 	script.Parent.Draggable = true
 	script.Parent.Active = true
 end
-coroutine.wrap(OKYT_fake_script)()
-local function SFAVUW_fake_script() -- Delete.LocalScript 
+coroutine.wrap(QGDW_fake_script)()
+local function LHDEM_fake_script() -- Delete.LocalScript 
 	local script = Instance.new('LocalScript', Delete)
 
 	local player = game.Players.LocalPlayer
 	local mouse = player:GetMouse()
 	local remote = game:GetService("ReplicatedStorage"):WaitForChild("DeleteCar")
-	
+	local storage = script.Parent
 	local tool = Instance.new("Tool")
 	tool.Name = "Delete Tool"
 	tool.RequiresHandle = false
 	tool.CanBeDropped = false
+	tool.Parent = storage
 	
-	tool.Parent = player:WaitForChild("Backpack")
+	script.Parent.Activated:Connect(function()
+		local clone = tool:Clone()
+		clone.Parent = player.Backpack
+		clone.TextureContent = Content.fromUri("rbxassetid://14808588")
+		clone.Activated:Connect(function()
+			local target = mouse.Target
+			if target then
+				remote:FireServer(target)
+			end
+		end)
+	end)
 	
 	tool.Activated:Connect(function()
 		local target = mouse.Target
@@ -350,8 +398,8 @@ local function SFAVUW_fake_script() -- Delete.LocalScript
 		end
 	end)
 end
-coroutine.wrap(SFAVUW_fake_script)()
-local function PGDI_fake_script() -- Bald.LocalScript 
+coroutine.wrap(LHDEM_fake_script)()
+local function SAANMLA_fake_script() -- Bald.LocalScript 
 	local script = Instance.new('LocalScript', Bald)
 
 	local Players = game:GetService("Players")
@@ -403,8 +451,8 @@ local function PGDI_fake_script() -- Bald.LocalScript
 		end
 	end)
 end
-coroutine.wrap(PGDI_fake_script)()
-local function WGBYEMQ_fake_script() -- Kill.LocalScript 
+coroutine.wrap(SAANMLA_fake_script)()
+local function JSOSHP_fake_script() -- Kill.LocalScript 
 	local script = Instance.new('LocalScript', Kill)
 
 	local Players = game:GetService("Players")
@@ -472,8 +520,8 @@ local function WGBYEMQ_fake_script() -- Kill.LocalScript
 		end
 	end)
 end
-coroutine.wrap(WGBYEMQ_fake_script)()
-local function EPUIKRJ_fake_script() -- Naked.LocalScript 
+coroutine.wrap(JSOSHP_fake_script)()
+local function URGE_fake_script() -- Naked.LocalScript 
 	local script = Instance.new('LocalScript', Naked)
 
 	local Players = game:GetService("Players")
@@ -530,8 +578,8 @@ local function EPUIKRJ_fake_script() -- Naked.LocalScript
 		end
 	end)
 end
-coroutine.wrap(EPUIKRJ_fake_script)()
-local function MZMSF_fake_script() -- Ban.LocalScript 
+coroutine.wrap(URGE_fake_script)()
+local function QPIYT_fake_script() -- Ban.LocalScript 
 	local script = Instance.new('LocalScript', Ban)
 
 	local Players = game:GetService("Players")
@@ -588,8 +636,8 @@ local function MZMSF_fake_script() -- Ban.LocalScript
 		end)
 	end)
 end
-coroutine.wrap(MZMSF_fake_script)()
-local function DBTOR_fake_script() -- Kick.LocalScript 
+coroutine.wrap(QPIYT_fake_script)()
+local function CDDSXT_fake_script() -- Kick.LocalScript 
 	local script = Instance.new('LocalScript', Kick)
 
 	local Players = game:GetService("Players")
@@ -637,8 +685,8 @@ local function DBTOR_fake_script() -- Kick.LocalScript
 		end
 	end)
 end
-coroutine.wrap(DBTOR_fake_script)()
-local function GXFUV_fake_script() -- Ragdoll.LocalScript 
+coroutine.wrap(CDDSXT_fake_script)()
+local function EFTQYSX_fake_script() -- Ragdoll.LocalScript 
 	local script = Instance.new('LocalScript', Ragdoll)
 
 	local Players = game:GetService("Players")
@@ -689,8 +737,8 @@ local function GXFUV_fake_script() -- Ragdoll.LocalScript
 		end
 	end)
 end
-coroutine.wrap(GXFUV_fake_script)()
-local function ZMLPH_fake_script() -- Noanims.LocalScript 
+coroutine.wrap(EFTQYSX_fake_script)()
+local function TROHGW_fake_script() -- Noanims.LocalScript 
 	local script = Instance.new('LocalScript', Noanims)
 
 	local Players = game:GetService("Players")
@@ -741,8 +789,8 @@ local function ZMLPH_fake_script() -- Noanims.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ZMLPH_fake_script)()
-local function PXPUV_fake_script() -- notools.LocalScript 
+coroutine.wrap(TROHGW_fake_script)()
+local function YNCON_fake_script() -- notools.LocalScript 
 	local script = Instance.new('LocalScript', notools)
 
 	local Players = game:GetService("Players")
@@ -795,8 +843,8 @@ local function PXPUV_fake_script() -- notools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(PXPUV_fake_script)()
-local function YLIPXM_fake_script() -- nolimbs.LocalScript 
+coroutine.wrap(YNCON_fake_script)()
+local function QFWC_fake_script() -- nolimbs.LocalScript 
 	local script = Instance.new('LocalScript', nolimbs)
 
 	local Players = game:GetService("Players")
@@ -872,8 +920,8 @@ local function YLIPXM_fake_script() -- nolimbs.LocalScript
 		end
 	end)
 end
-coroutine.wrap(YLIPXM_fake_script)()
-local function LFEUUQ_fake_script() -- punish.LocalScript 
+coroutine.wrap(QFWC_fake_script)()
+local function PCSAHD_fake_script() -- punish.LocalScript 
 	local script = Instance.new('LocalScript', punish)
 
 	local Players = game:GetService("Players")
@@ -958,8 +1006,8 @@ local function LFEUUQ_fake_script() -- punish.LocalScript
 		end
 	end)
 end
-coroutine.wrap(LFEUUQ_fake_script)()
-local function VKCNS_fake_script() -- Spawnship.LocalScript 
+coroutine.wrap(PCSAHD_fake_script)()
+local function HTPQGZ_fake_script() -- Spawnship.LocalScript 
 	local script = Instance.new('LocalScript', Spawnship)
 
 	script.Parent.Activated:Connect(function()
@@ -969,8 +1017,8 @@ local function VKCNS_fake_script() -- Spawnship.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(VKCNS_fake_script)()
-local function YMKIMIP_fake_script() -- SpawnshipLoop.LocalScript 
+coroutine.wrap(HTPQGZ_fake_script)()
+local function NESJXHT_fake_script() -- SpawnshipLoop.LocalScript 
 	local script = Instance.new('LocalScript', SpawnshipLoop)
 
 	local running = false
@@ -987,8 +1035,8 @@ local function YMKIMIP_fake_script() -- SpawnshipLoop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(YMKIMIP_fake_script)()
-local function IYVAITG_fake_script() -- ws.LocalScript 
+coroutine.wrap(NESJXHT_fake_script)()
+local function LHWCWJ_fake_script() -- ws.LocalScript 
 	local script = Instance.new('LocalScript', ws)
 
 	local Players = game:GetService("Players")
@@ -1010,8 +1058,8 @@ local function IYVAITG_fake_script() -- ws.LocalScript
 		end
 	end)
 end
-coroutine.wrap(IYVAITG_fake_script)()
-local function ZNRFUP_fake_script() -- wspow.LocalScript 
+coroutine.wrap(LHWCWJ_fake_script)()
+local function LRPJWCJ_fake_script() -- wspow.LocalScript 
 	local script = Instance.new('LocalScript', wspow)
 
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -1025,8 +1073,8 @@ local function ZNRFUP_fake_script() -- wspow.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ZNRFUP_fake_script)()
-local function MTDNSXW_fake_script() -- Spawnspace.LocalScript 
+coroutine.wrap(LRPJWCJ_fake_script)()
+local function SRUDC_fake_script() -- Spawnspace.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspace)
 
 	script.Parent.Activated:Connect(function()
@@ -1036,8 +1084,8 @@ local function MTDNSXW_fake_script() -- Spawnspace.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(MTDNSXW_fake_script)()
-local function JHUOV_fake_script() -- Spawnspaceloop.LocalScript 
+coroutine.wrap(SRUDC_fake_script)()
+local function KKBZAT_fake_script() -- Spawnspaceloop.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspaceloop)
 
 	local running = false
@@ -1054,8 +1102,8 @@ local function JHUOV_fake_script() -- Spawnspaceloop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(JHUOV_fake_script)()
-local function RPZRX_fake_script() -- wslight.LocalScript 
+coroutine.wrap(KKBZAT_fake_script)()
+local function MAFSN_fake_script() -- wslight.LocalScript 
 	local script = Instance.new('LocalScript', wslight)
 
 	local Lighting = game:GetService("Lighting")
@@ -1071,8 +1119,8 @@ local function RPZRX_fake_script() -- wslight.LocalScript
 		end
 	end)
 end
-coroutine.wrap(RPZRX_fake_script)()
-local function LAEHVDS_fake_script() -- wsgui.LocalScript 
+coroutine.wrap(MAFSN_fake_script)()
+local function JSGSJIO_fake_script() -- wsgui.LocalScript 
 	local script = Instance.new('LocalScript', wsgui)
 
 	local Players = game:GetService("Players")
@@ -1102,8 +1150,8 @@ local function LAEHVDS_fake_script() -- wsgui.LocalScript
 		end
 	end)
 end
-coroutine.wrap(LAEHVDS_fake_script)()
-local function ENYX_fake_script() -- wstools.LocalScript 
+coroutine.wrap(JSGSJIO_fake_script)()
+local function YLVKNW_fake_script() -- wstools.LocalScript 
 	local script = Instance.new('LocalScript', wstools)
 
 	local Players = game:GetService("Players")
@@ -1133,4 +1181,18 @@ local function ENYX_fake_script() -- wstools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ENYX_fake_script)()
+coroutine.wrap(YLVKNW_fake_script)()
+local function FEUNPUZ_fake_script() -- sword.LocalScript 
+	local script = Instance.new('LocalScript', sword)
+
+	local sword = script.Parent.ClassicSword
+	sword.Parent = game.ServerStorage.Cars
+	
+	script.Parent.Activated:Connect(function()
+			local args = {
+				"ClassicSword"
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
+	end)
+end
+coroutine.wrap(FEUNPUZ_fake_script)()
