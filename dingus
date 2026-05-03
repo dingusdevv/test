@@ -776,9 +776,18 @@ task.spawn(function()
 		end
 
 		-- Predict future position so we float smoothly
-		local speed = hrp1.Velocity.Magnitude
-		local predictTime = math.clamp(speed / 60, 0.12, 0.45)
-		local predicted = hrp1.Position + hrp1.Velocity * predictTime
+		local vel = hrp1.Velocity
+		local speed = vel.Magnitude
+		
+		-- stronger prediction + forward bias
+		local predictTime = math.clamp(speed / 45, 0.18, 0.6)
+		
+		-- extra forward push (THIS is what you want)
+		local forwardBoost = 3 + (speed * 0.08)
+		
+		local predicted = hrp1.Position 
+			+ vel * predictTime 
+			+ (speed > 0.1 and vel.Unit * forwardBoost or v3_0)
 		
 		-- Keep lying flat using the SAME rotation ("off")
 		local flatPos = v3(predicted.X, snapY, predicted.Z)
