@@ -322,14 +322,14 @@ wstools.TextSize = 14.000
 
 -- Scripts:
 
-local function ZFPD_fake_script() -- harked.LocalScript 
+local function OKYT_fake_script() -- harked.LocalScript 
 	local script = Instance.new('LocalScript', harked)
 
 	script.Parent.Draggable = true
 	script.Parent.Active = true
 end
-coroutine.wrap(ZFPD_fake_script)()
-local function THZA_fake_script() -- Delete.LocalScript 
+coroutine.wrap(OKYT_fake_script)()
+local function SFAVUW_fake_script() -- Delete.LocalScript 
 	local script = Instance.new('LocalScript', Delete)
 
 	local player = game.Players.LocalPlayer
@@ -350,8 +350,8 @@ local function THZA_fake_script() -- Delete.LocalScript
 		end
 	end)
 end
-coroutine.wrap(THZA_fake_script)()
-local function TRTPFC_fake_script() -- Bald.LocalScript 
+coroutine.wrap(SFAVUW_fake_script)()
+local function PGDI_fake_script() -- Bald.LocalScript 
 	local script = Instance.new('LocalScript', Bald)
 
 	local Players = game:GetService("Players")
@@ -403,8 +403,8 @@ local function TRTPFC_fake_script() -- Bald.LocalScript
 		end
 	end)
 end
-coroutine.wrap(TRTPFC_fake_script)()
-local function UHUHAZY_fake_script() -- Kill.LocalScript 
+coroutine.wrap(PGDI_fake_script)()
+local function WGBYEMQ_fake_script() -- Kill.LocalScript 
 	local script = Instance.new('LocalScript', Kill)
 
 	local Players = game:GetService("Players")
@@ -472,8 +472,8 @@ local function UHUHAZY_fake_script() -- Kill.LocalScript
 		end
 	end)
 end
-coroutine.wrap(UHUHAZY_fake_script)()
-local function CUSXKQT_fake_script() -- Naked.LocalScript 
+coroutine.wrap(WGBYEMQ_fake_script)()
+local function EPUIKRJ_fake_script() -- Naked.LocalScript 
 	local script = Instance.new('LocalScript', Naked)
 
 	local Players = game:GetService("Players")
@@ -530,8 +530,8 @@ local function CUSXKQT_fake_script() -- Naked.LocalScript
 		end
 	end)
 end
-coroutine.wrap(CUSXKQT_fake_script)()
-local function KUTG_fake_script() -- Ban.LocalScript 
+coroutine.wrap(EPUIKRJ_fake_script)()
+local function MZMSF_fake_script() -- Ban.LocalScript 
 	local script = Instance.new('LocalScript', Ban)
 
 	local Players = game:GetService("Players")
@@ -588,8 +588,8 @@ local function KUTG_fake_script() -- Ban.LocalScript
 		end)
 	end)
 end
-coroutine.wrap(KUTG_fake_script)()
-local function QEMM_fake_script() -- Kick.LocalScript 
+coroutine.wrap(MZMSF_fake_script)()
+local function DBTOR_fake_script() -- Kick.LocalScript 
 	local script = Instance.new('LocalScript', Kick)
 
 	local Players = game:GetService("Players")
@@ -637,8 +637,8 @@ local function QEMM_fake_script() -- Kick.LocalScript
 		end
 	end)
 end
-coroutine.wrap(QEMM_fake_script)()
-local function EGVF_fake_script() -- Ragdoll.LocalScript 
+coroutine.wrap(DBTOR_fake_script)()
+local function GXFUV_fake_script() -- Ragdoll.LocalScript 
 	local script = Instance.new('LocalScript', Ragdoll)
 
 	local Players = game:GetService("Players")
@@ -689,8 +689,8 @@ local function EGVF_fake_script() -- Ragdoll.LocalScript
 		end
 	end)
 end
-coroutine.wrap(EGVF_fake_script)()
-local function BHADL_fake_script() -- Noanims.LocalScript 
+coroutine.wrap(GXFUV_fake_script)()
+local function ZMLPH_fake_script() -- Noanims.LocalScript 
 	local script = Instance.new('LocalScript', Noanims)
 
 	local Players = game:GetService("Players")
@@ -741,8 +741,8 @@ local function BHADL_fake_script() -- Noanims.LocalScript
 		end
 	end)
 end
-coroutine.wrap(BHADL_fake_script)()
-local function PQOHS_fake_script() -- notools.LocalScript 
+coroutine.wrap(ZMLPH_fake_script)()
+local function PXPUV_fake_script() -- notools.LocalScript 
 	local script = Instance.new('LocalScript', notools)
 
 	local Players = game:GetService("Players")
@@ -795,8 +795,8 @@ local function PQOHS_fake_script() -- notools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(PQOHS_fake_script)()
-local function LMXIZZT_fake_script() -- nolimbs.LocalScript 
+coroutine.wrap(PXPUV_fake_script)()
+local function YLIPXM_fake_script() -- nolimbs.LocalScript 
 	local script = Instance.new('LocalScript', nolimbs)
 
 	local Players = game:GetService("Players")
@@ -872,8 +872,8 @@ local function LMXIZZT_fake_script() -- nolimbs.LocalScript
 		end
 	end)
 end
-coroutine.wrap(LMXIZZT_fake_script)()
-local function SGYSX_fake_script() -- punish.LocalScript 
+coroutine.wrap(YLIPXM_fake_script)()
+local function LFEUUQ_fake_script() -- punish.LocalScript 
 	local script = Instance.new('LocalScript', punish)
 
 	local Players = game:GetService("Players")
@@ -958,8 +958,8 @@ local function SGYSX_fake_script() -- punish.LocalScript
 		end
 	end)
 end
-coroutine.wrap(SGYSX_fake_script)()
-local function LIXG_fake_script() -- Spawnship.LocalScript 
+coroutine.wrap(LFEUUQ_fake_script)()
+local function VKCNS_fake_script() -- Spawnship.LocalScript 
 	local script = Instance.new('LocalScript', Spawnship)
 
 	script.Parent.Activated:Connect(function()
@@ -969,8 +969,8 @@ local function LIXG_fake_script() -- Spawnship.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(LIXG_fake_script)()
-local function LSBKQS_fake_script() -- SpawnshipLoop.LocalScript 
+coroutine.wrap(VKCNS_fake_script)()
+local function YMKIMIP_fake_script() -- SpawnshipLoop.LocalScript 
 	local script = Instance.new('LocalScript', SpawnshipLoop)
 
 	local running = false
@@ -987,8 +987,8 @@ local function LSBKQS_fake_script() -- SpawnshipLoop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(LSBKQS_fake_script)()
-local function TLEOJ_fake_script() -- ws.LocalScript 
+coroutine.wrap(YMKIMIP_fake_script)()
+local function IYVAITG_fake_script() -- ws.LocalScript 
 	local script = Instance.new('LocalScript', ws)
 
 	local Players = game:GetService("Players")
@@ -1010,8 +1010,8 @@ local function TLEOJ_fake_script() -- ws.LocalScript
 		end
 	end)
 end
-coroutine.wrap(TLEOJ_fake_script)()
-local function JPAOII_fake_script() -- wspow.LocalScript 
+coroutine.wrap(IYVAITG_fake_script)()
+local function ZNRFUP_fake_script() -- wspow.LocalScript 
 	local script = Instance.new('LocalScript', wspow)
 
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -1025,8 +1025,8 @@ local function JPAOII_fake_script() -- wspow.LocalScript
 		end
 	end)
 end
-coroutine.wrap(JPAOII_fake_script)()
-local function ACPY_fake_script() -- Spawnspace.LocalScript 
+coroutine.wrap(ZNRFUP_fake_script)()
+local function MTDNSXW_fake_script() -- Spawnspace.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspace)
 
 	script.Parent.Activated:Connect(function()
@@ -1036,8 +1036,8 @@ local function ACPY_fake_script() -- Spawnspace.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(ACPY_fake_script)()
-local function ZCIXXJG_fake_script() -- Spawnspaceloop.LocalScript 
+coroutine.wrap(MTDNSXW_fake_script)()
+local function JHUOV_fake_script() -- Spawnspaceloop.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspaceloop)
 
 	local running = false
@@ -1054,8 +1054,8 @@ local function ZCIXXJG_fake_script() -- Spawnspaceloop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(ZCIXXJG_fake_script)()
-local function MFGJW_fake_script() -- wslight.LocalScript 
+coroutine.wrap(JHUOV_fake_script)()
+local function RPZRX_fake_script() -- wslight.LocalScript 
 	local script = Instance.new('LocalScript', wslight)
 
 	local Lighting = game:GetService("Lighting")
@@ -1071,8 +1071,8 @@ local function MFGJW_fake_script() -- wslight.LocalScript
 		end
 	end)
 end
-coroutine.wrap(MFGJW_fake_script)()
-local function EHTVQ_fake_script() -- wsgui.LocalScript 
+coroutine.wrap(RPZRX_fake_script)()
+local function LAEHVDS_fake_script() -- wsgui.LocalScript 
 	local script = Instance.new('LocalScript', wsgui)
 
 	local Players = game:GetService("Players")
@@ -1102,8 +1102,8 @@ local function EHTVQ_fake_script() -- wsgui.LocalScript
 		end
 	end)
 end
-coroutine.wrap(EHTVQ_fake_script)()
-local function FPKE_fake_script() -- wstools.LocalScript 
+coroutine.wrap(LAEHVDS_fake_script)()
+local function ENYX_fake_script() -- wstools.LocalScript 
 	local script = Instance.new('LocalScript', wstools)
 
 	local Players = game:GetService("Players")
@@ -1133,4 +1133,4 @@ local function FPKE_fake_script() -- wstools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(FPKE_fake_script)()
+coroutine.wrap(ENYX_fake_script)()
