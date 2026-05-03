@@ -576,7 +576,6 @@ bringBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ── SPEED ASSIST ──
--- FIX: targets the target's torso (HRP center) instead of footY
 local assisting=false
 
 task.spawn(function()
@@ -598,12 +597,9 @@ task.spawn(function()
 					local horizV=v3(tv.X,0,tv.Z)
 					local walkspeed=horizV.Magnitude
 
-					-- FIX: use target torso Y (HRP center), not foot level
-					local targetY=hrp1.Position.Y
-
 					if walkspeed<=0.5 then
-						-- Target is standing still: snap to their torso position lying flat
-						hrp.CFrame=cf(v3(hrp1.Position.X,targetY,hrp1.Position.Z))*off
+						local footY=hrp1.Position.Y-hrp1.Size.Y/2
+						hrp.CFrame=cf(v3(hrp1.Position.X,footY,hrp1.Position.Z))*off
 						hrp.Velocity=v3_0
 						hrp.RotVelocity=v3_0
 						twait()
@@ -611,6 +607,7 @@ task.spawn(function()
 					end
 
 					local dir=horizV.Unit
+					local footY=hrp1.Position.Y-hrp1.Size.Y/2
 					local vel=0
 					local way=0
 					local reachedmaxspeed=false
@@ -635,13 +632,12 @@ task.spawn(function()
 						end
 
 						dir=newDir
-						-- FIX: track torso Y, not foot Y
-						targetY=hrp1.Position.Y
+						footY=hrp1.Position.Y-hrp1.Size.Y/2
 
-						local basePos=v3(hrp1.Position.X,targetY,hrp1.Position.Z)
+						local basePos=v3(hrp1.Position.X,footY,hrp1.Position.Z)
 						local toP=basePos+dir*50
 
-						local myHorizPos=v3(hrp.Position.X,targetY,hrp.Position.Z)
+						local myHorizPos=v3(hrp.Position.X,footY,hrp.Position.Z)
 						local ahead=(myHorizPos-basePos):Dot(dir)
 						if ahead>30 then
 							vel=0
@@ -650,7 +646,7 @@ task.spawn(function()
 						end
 
 						if reachedmaxspeed then
-							if (basePos-v3(hrp.Position.X,targetY,hrp.Position.Z)).Magnitude<reachedmaxspeed then
+							if (basePos-v3(hrp.Position.X,footY,hrp.Position.Z)).Magnitude<reachedmaxspeed then
 								vel=vel-dt*speeding
 								if vel<0 then break end
 							end
@@ -664,7 +660,7 @@ task.spawn(function()
 
 						way=way+vel*dt
 
-						local newPos=v3(basePos.X+dir.X*way,targetY,basePos.Z+dir.Z*way)
+						local newPos=v3(basePos.X+dir.X*way,footY,basePos.Z+dir.Z*way)
 						hrp.CFrame=cf(newPos,toP)*off
 						hrp.Velocity=dir*(vel+1)
 						hrp.RotVelocity=v3_0
@@ -672,8 +668,8 @@ task.spawn(function()
 						twait()
 					end
 
-					-- Snap back to torso when idle
-					hrp.CFrame=cf(v3(hrp1.Position.X,hrp1.Position.Y,hrp1.Position.Z))*off
+					local footYFinal=hrp1.Position.Y-hrp1.Size.Y/2
+					hrp.CFrame=cf(v3(hrp1.Position.X,footYFinal,hrp1.Position.Z))*off
 					hrp.Velocity=v3_0
 					hrp.RotVelocity=v3_0
 				end
@@ -685,75 +681,57 @@ task.spawn(function()
 	end
 end)
 
--- ── JUMP ASSIST (fixed) ──
--- When the target jumps, we launch upward from beneath their feet, flicking up
--- to stay just below them through the arc using bring/speed-style lying-flat CFrame.
-local jumpActive=false
+-- JUMP ASSIST (flick version)
+local lastJumpTime = 0
 
 task.spawn(function()
 	while true do
 		twait()
-		if not jumpEnabled or not target or bringing then
-			jumpActive=false
-			continue
-		end
+
+		if not jumpEnabled or not target or bringing then continue end
 
 		local c=lp.Character
 		local c1=target and target.Character
 		if not (c and c1) then continue end
 		if not (c:IsDescendantOf(ws) and c1:IsDescendantOf(ws)) then continue end
+
 		local hrp=gp(c,"HumanoidRootPart","BasePart")
 		local hrp1=gp(c1,"HumanoidRootPart","BasePart")
 		if not (hrp and hrp1) then continue end
 
-		-- Detect jump: target moving upward
-		if not jumpActive and hrp1.Velocity.Y > 1 then
-			jumpActive=true
-			task.spawn(function()
-				local peakReached=false
-				while jumpEnabled and target and not bringing do
-					local ch=lp.Character
-					local ch1=target and target.Character
-					if not (ch and ch1) then break end
-					local r=gp(ch,"HumanoidRootPart","BasePart")
-					local r1=gp(ch1,"HumanoidRootPart","BasePart")
-					if not (r and r1) then break end
+		-- detect jump (rising fast + debounce)
+		if hrp1.Velocity.Y > 2 and osclock() - lastJumpTime > 0.25 then
+			lastJumpTime = osclock()
 
-					-- Position: just below their FEET (bottom of their HRP),
-					-- lying flat with the off rotation like bring/speed assist does.
-					-- Their feet = r1.Position.Y - r1.Size.Y/2
-					local feetY = r1.Position.Y - r1.Size.Y/2
+			local vel = hrp1.Velocity
+			local horiz = v3(vel.X,0,vel.Z)
 
-					-- Look direction: flat horizontal toward where they're moving,
-					-- or just forward if standing still (off handles the tilt)
-					local hv=v3(r1.Velocity.X,0,r1.Velocity.Z)
-					local lookTarget
-					if hv.Magnitude>0.1 then
-						lookTarget=v3(r1.Position.X,feetY,r1.Position.Z)+hv.Unit*10
-					else
-						lookTarget=v3(r1.Position.X+1,feetY,r1.Position.Z)
-					end
+			-- predict forward if moving
+			local offset = v3_0
+			if horiz.Magnitude > 1 then
+				offset = horiz.Unit * 2.5
+			end
 
-					-- Snap XZ to under their feet, Y to feet level
-					r.CFrame=cf(v3(r1.Position.X, feetY, r1.Position.Z), lookTarget)*off
-					-- Apply scaled jump velocity upward so we keep up through lag
-					r.Velocity=v3(r1.Velocity.X, r1.Velocity.Y*(jumpPower/100), r1.Velocity.Z)
-					r.RotVelocity=v3_0
+			-- feet position
+			local feetY = hrp1.Position.Y - (hrp1.Size.Y/2)
 
-					-- Track peak
-					if r1.Velocity.Y <= 0 then peakReached=true end
+			-- teleport under / slightly ahead
+			local basePos = v3(
+				hrp1.Position.X + offset.X,
+				feetY - (hrp.Size.Y/2) - 0.1,
+				hrp1.Position.Z + offset.Z
+			)
 
-					twait()
+			hrp.CFrame = cf(basePos)
 
-					-- Exit once past peak and clearly descending / landed
-					if peakReached and r1.Velocity.Y < -2 then
-						twait()
-						twait()
-						break
-					end
-				end
-				jumpActive=false
-			end)
+			-- 🔥 THE FLICK
+			hrp.Velocity = v3(
+				vel.X,
+				jumpPower,
+				vel.Z
+			)
+
+			hrp.RotVelocity = v3_0
 		end
 	end
 end)
@@ -797,10 +775,26 @@ task.spawn(function()
 			lookTarget=v3(hrp1.Position.X+1,snapY,hrp1.Position.Z)
 		end
 
-		hrp.CFrame=cf(v3(hrp1.Position.X, snapY, hrp1.Position.Z), lookTarget)*off
+		-- Predict future position so we float smoothly
+		local speed = hrp1.Velocity.Magnitude
+		local predictTime = math.clamp(speed / 60, 0.12, 0.45)
+		local predicted = hrp1.Position + hrp1.Velocity * predictTime
+		
+		-- Keep lying flat using the SAME rotation ("off")
+		local flatPos = v3(predicted.X, snapY, predicted.Z)
+		
+		-- Make the facing direction also predictive
+		local predictedLook = flatPos + (
+		    hrp1.Velocity.Magnitude > 0.1 
+		    and hrp1.Velocity.Unit * 10 
+		    or v3(1,0,0)
+		)
+		
+		hrp.CFrame = cf(flatPos, predictedLook) * off
+		
 		-- Inherit target velocity so we don't fall behind
-		hrp.Velocity=hrp1.Velocity
-		hrp.RotVelocity=v3_0
+		hrp.Velocity = hrp1.Velocity
+		hrp.RotVelocity = v3_0
 	end
 end)
 
