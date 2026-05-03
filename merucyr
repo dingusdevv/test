@@ -78,7 +78,6 @@ ScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ScrollingFrame.BorderSizePixel = 0
 ScrollingFrame.Position = UDim2.new(0.068965517, 0, 0.172727272, 0)
 ScrollingFrame.Size = UDim2.new(0, 203, 0, 204)
-ScrollingFrame.CanvasPosition = Vector2.new(0, 215)
 
 Delete.Name = "Delete"
 Delete.Parent = ScrollingFrame
@@ -322,14 +321,14 @@ wstools.TextSize = 14.000
 
 -- Scripts:
 
-local function CDNESFL_fake_script() -- harked.LocalScript 
+local function EZPGTUG_fake_script() -- harked.LocalScript 
 	local script = Instance.new('LocalScript', harked)
 
 	script.Parent.Draggable = true
 	script.Parent.Active = true
 end
-coroutine.wrap(CDNESFL_fake_script)()
-local function WJRQL_fake_script() -- Delete.LocalScript 
+coroutine.wrap(EZPGTUG_fake_script)()
+local function PMDLH_fake_script() -- Delete.LocalScript 
 	local script = Instance.new('LocalScript', Delete)
 
 	local player = game.Players.LocalPlayer
@@ -350,8 +349,8 @@ local function WJRQL_fake_script() -- Delete.LocalScript
 		end
 	end)
 end
-coroutine.wrap(WJRQL_fake_script)()
-local function VJBMO_fake_script() -- Bald.LocalScript 
+coroutine.wrap(PMDLH_fake_script)()
+local function FEFVREP_fake_script() -- Bald.LocalScript 
 	local script = Instance.new('LocalScript', Bald)
 
 	local Players = game:GetService("Players")
@@ -362,29 +361,49 @@ local function VJBMO_fake_script() -- Bald.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		for _, item in ipairs(targetPlayer.Character:GetChildren()) do
-			if item:IsA("Accessory") then
-				remote:FireServer(item)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer.Character then
+				for _, item in ipairs(targetPlayer.Character:GetChildren()) do
+					if item:IsA("Accessory") then
+						remote:FireServer(item)
+					end
+				end
 			end
 		end
 	end)
 end
-coroutine.wrap(VJBMO_fake_script)()
-local function CRFZKK_fake_script() -- Kill.LocalScript 
+coroutine.wrap(FEFVREP_fake_script)()
+local function VSGXL_fake_script() -- Kill.LocalScript 
 	local script = Instance.new('LocalScript', Kill)
 
 	local Players = game:GetService("Players")
@@ -395,14 +414,31 @@ local function CRFZKK_fake_script() -- Kill.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	local function findNeck(char)
@@ -414,26 +450,29 @@ local function CRFZKK_fake_script() -- Kill.LocalScript
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		local char = targetPlayer.Character
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer.Character then
+				local char = targetPlayer.Character
 	
-		if char:FindFirstChild("UpperTorso") then
-			local neck = findNeck(char)
-			if neck then
-				remote:FireServer(neck)
-			end
-		else
-			local head = char:FindFirstChild("Head")
-			if head then
-				remote:FireServer(head)
+				if char:FindFirstChild("UpperTorso") then
+					local neck = findNeck(char)
+					if neck then
+						remote:FireServer(neck)
+					end
+				else
+					local head = char:FindFirstChild("Head")
+					if head then
+						remote:FireServer(head)
+					end
+				end
 			end
 		end
 	end)
 end
-coroutine.wrap(CRFZKK_fake_script)()
-local function GQBLM_fake_script() -- Naked.LocalScript 
+coroutine.wrap(VSGXL_fake_script)()
+local function GDFAZ_fake_script() -- Naked.LocalScript 
 	local script = Instance.new('LocalScript', Naked)
 
 	local Players = game:GetService("Players")
@@ -444,34 +483,54 @@ local function GQBLM_fake_script() -- Naked.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		for _, obj in ipairs(targetPlayer.Character:GetDescendants()) do
-			if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") then
-				remote:FireServer(obj)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer and targetPlayer.Character then
+				for _, obj in ipairs(targetPlayer.Character:GetDescendants()) do
+					if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") then
+						remote:FireServer(obj)
 	
-			elseif obj:IsA("Decal") then
-				if not (obj.Parent and obj.Parent.Name == "Head") then
-					remote:FireServer(obj)
+					elseif obj:IsA("Decal") then
+						if not (obj.Parent and obj.Parent.Name == "Head") then
+							remote:FireServer(obj)
+						end
+					end
 				end
 			end
 		end
 	end)
 end
-coroutine.wrap(GQBLM_fake_script)()
-local function DTNOGE_fake_script() -- Ban.LocalScript 
+coroutine.wrap(GDFAZ_fake_script)()
+local function NVFEK_fake_script() -- Ban.LocalScript 
 	local script = Instance.new('LocalScript', Ban)
 
 	local Players = game:GetService("Players")
@@ -482,25 +541,45 @@ local function DTNOGE_fake_script() -- Ban.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayerByName(name)
-		name = name:lower()
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #name) == name then
-				return p
+	local function getTargets(input)
+		input = input:lower()
+		local targets = {}
+	
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
 		task.spawn(function()
-			local targetName = textbox.Text
-			if targetName == "" then return end
+			local targetInput = textbox.Text
+			if targetInput == "" then return end
 	
-			while textbox.Text == targetName do
-				local targetPlayer = findPlayerByName(targetName)
+			while textbox.Text == targetInput do
+				local targets = getTargets(targetInput)
 	
-				if targetPlayer and targetPlayer ~= Players.LocalPlayer then
-					remote:FireServer(targetPlayer)
+				for _, targetPlayer in ipairs(targets) do
+					if targetPlayer and targetPlayer ~= Players.LocalPlayer then
+						remote:FireServer(targetPlayer)
+					end
 				end
 	
 				task.wait(0.5)
@@ -508,8 +587,8 @@ local function DTNOGE_fake_script() -- Ban.LocalScript
 		end)
 	end)
 end
-coroutine.wrap(DTNOGE_fake_script)()
-local function DVWDQ_fake_script() -- Kick.LocalScript 
+coroutine.wrap(NVFEK_fake_script)()
+local function WWMO_fake_script() -- Kick.LocalScript 
 	local script = Instance.new('LocalScript', Kick)
 
 	local Players = game:GetService("Players")
@@ -520,25 +599,45 @@ local function DVWDQ_fake_script() -- Kick.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if targetPlayer then
-			remote:FireServer(targetPlayer)
+		local targets = getTargets(textbox.Text)
+	
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer then
+				remote:FireServer(targetPlayer)
+			end
 		end
 	end)
 end
-coroutine.wrap(DVWDQ_fake_script)()
-local function LDCCY_fake_script() -- Ragdoll.LocalScript 
+coroutine.wrap(WWMO_fake_script)()
+local function FQMYK_fake_script() -- Ragdoll.LocalScript 
 	local script = Instance.new('LocalScript', Ragdoll)
 
 	local Players = game:GetService("Players")
@@ -549,28 +648,48 @@ local function LDCCY_fake_script() -- Ragdoll.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if humanoid then
-			remote:FireServer(humanoid)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer and targetPlayer.Character then
+				local humanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+				if humanoid then
+					remote:FireServer(humanoid)
+				end
+			end
 		end
 	end)
 end
-coroutine.wrap(LDCCY_fake_script)()
-local function VWXA_fake_script() -- Noanims.LocalScript 
+coroutine.wrap(FQMYK_fake_script)()
+local function HCYOEDQ_fake_script() -- Noanims.LocalScript 
 	local script = Instance.new('LocalScript', Noanims)
 
 	local Players = game:GetService("Players")
@@ -581,28 +700,48 @@ local function VWXA_fake_script() -- Noanims.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		local humanoid = targetPlayer.Character:FindFirstChild("Animate")
-		if humanoid then
-			remote:FireServer(humanoid)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer and targetPlayer.Character then
+				local animate = targetPlayer.Character:FindFirstChild("Animate")
+				if animate then
+					remote:FireServer(animate)
+				end
+			end
 		end
 	end)
 end
-coroutine.wrap(VWXA_fake_script)()
-local function EFYC_fake_script() -- notools.LocalScript 
+coroutine.wrap(HCYOEDQ_fake_script)()
+local function ZHXWFH_fake_script() -- notools.LocalScript 
 	local script = Instance.new('LocalScript', notools)
 
 	local Players = game:GetService("Players")
@@ -613,30 +752,50 @@ local function EFYC_fake_script() -- notools.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer then return end
+		local targets = getTargets(textbox.Text)
 	
-		local backpack = targetPlayer:FindFirstChild("Backpack")
-		if not backpack then return end
-	
-		for _, item in ipairs(backpack:GetChildren()) do
-			remote:FireServer(item)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer then
+				local backpack = targetPlayer:FindFirstChild("Backpack")
+				if backpack then
+					for _, item in ipairs(backpack:GetChildren()) do
+						remote:FireServer(item)
+					end
+				end
+			end
 		end
 	end)
 end
-coroutine.wrap(EFYC_fake_script)()
-local function OZEBU_fake_script() -- nolimbs.LocalScript 
+coroutine.wrap(ZHXWFH_fake_script)()
+local function HSYESC_fake_script() -- nolimbs.LocalScript 
 	local script = Instance.new('LocalScript', nolimbs)
 
 	local Players = game:GetService("Players")
@@ -644,14 +803,31 @@ local function OZEBU_fake_script() -- nolimbs.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	local function cleanCharacter(char)
@@ -681,14 +857,17 @@ local function OZEBU_fake_script() -- nolimbs.LocalScript
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		cleanCharacter(targetPlayer.Character)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer and targetPlayer.Character then
+				cleanCharacter(targetPlayer.Character)
+			end
+		end
 	end)
 end
-coroutine.wrap(OZEBU_fake_script)()
-local function SLLX_fake_script() -- punish.LocalScript 
+coroutine.wrap(HSYESC_fake_script)()
+local function JZFSD_fake_script() -- punish.LocalScript 
 	local script = Instance.new('LocalScript', punish)
 
 	local Players = game:GetService("Players")
@@ -699,14 +878,31 @@ local function SLLX_fake_script() -- punish.LocalScript
 	local button = script.Parent
 	local textbox = button.Parent.Parent:WaitForChild("TextBox")
 	
-	local function findPlayer(input)
+	local function getTargets(input)
 		input = input:lower()
+		local targets = {}
 	
-		for _, p in ipairs(Players:GetPlayers()) do
-			if p.Name:lower():sub(1, #input) == input then
-				return p
+		if input == "all" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(targets, p)
+			end
+	
+		elseif input == "others" then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= Players.LocalPlayer then
+					table.insert(targets, p)
+				end
+			end
+	
+		else
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name:lower():sub(1, #input) == input then
+					table.insert(targets, p)
+				end
 			end
 		end
+	
+		return targets
 	end
 	
 	local function sendForDeletion(char)
@@ -725,7 +921,7 @@ local function SLLX_fake_script() -- punish.LocalScript
 			for _, obj in ipairs(char:GetDescendants()) do
 				if obj:IsA("MeshPart") then
 					send(obj)
-				end	
+				end
 			end
 		else
 			local parts = {
@@ -747,14 +943,17 @@ local function SLLX_fake_script() -- punish.LocalScript
 	end
 	
 	button.MouseButton1Click:Connect(function()
-		local targetPlayer = findPlayer(textbox.Text)
-		if not targetPlayer or not targetPlayer.Character then return end
+		local targets = getTargets(textbox.Text)
 	
-		sendForDeletion(targetPlayer.Character)
+		for _, targetPlayer in ipairs(targets) do
+			if targetPlayer and targetPlayer.Character then
+				sendForDeletion(targetPlayer.Character)
+			end
+		end
 	end)
 end
-coroutine.wrap(SLLX_fake_script)()
-local function WFNUMB_fake_script() -- Spawnship.LocalScript 
+coroutine.wrap(JZFSD_fake_script)()
+local function MGTC_fake_script() -- Spawnship.LocalScript 
 	local script = Instance.new('LocalScript', Spawnship)
 
 	script.Parent.Activated:Connect(function()
@@ -764,8 +963,8 @@ local function WFNUMB_fake_script() -- Spawnship.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(WFNUMB_fake_script)()
-local function WHDJAMV_fake_script() -- SpawnshipLoop.LocalScript 
+coroutine.wrap(MGTC_fake_script)()
+local function XVZR_fake_script() -- SpawnshipLoop.LocalScript 
 	local script = Instance.new('LocalScript', SpawnshipLoop)
 
 	local running = false
@@ -782,8 +981,8 @@ local function WHDJAMV_fake_script() -- SpawnshipLoop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(WHDJAMV_fake_script)()
-local function MGGPA_fake_script() -- ws.LocalScript 
+coroutine.wrap(XVZR_fake_script)()
+local function RTSQXOX_fake_script() -- ws.LocalScript 
 	local script = Instance.new('LocalScript', ws)
 
 	local Players = game:GetService("Players")
@@ -805,8 +1004,8 @@ local function MGGPA_fake_script() -- ws.LocalScript
 		end
 	end)
 end
-coroutine.wrap(MGGPA_fake_script)()
-local function AQPGZLU_fake_script() -- wspow.LocalScript 
+coroutine.wrap(RTSQXOX_fake_script)()
+local function FENRR_fake_script() -- wspow.LocalScript 
 	local script = Instance.new('LocalScript', wspow)
 
 	local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -820,8 +1019,8 @@ local function AQPGZLU_fake_script() -- wspow.LocalScript
 		end
 	end)
 end
-coroutine.wrap(AQPGZLU_fake_script)()
-local function DAIEWN_fake_script() -- Spawnspace.LocalScript 
+coroutine.wrap(FENRR_fake_script)()
+local function MFGX_fake_script() -- Spawnspace.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspace)
 
 	script.Parent.Activated:Connect(function()
@@ -831,8 +1030,8 @@ local function DAIEWN_fake_script() -- Spawnspace.LocalScript
 		game:GetService("ReplicatedStorage"):WaitForChild("SpawnCar"):FireServer(unpack(args))
 	end)
 end
-coroutine.wrap(DAIEWN_fake_script)()
-local function RTXTSE_fake_script() -- Spawnspaceloop.LocalScript 
+coroutine.wrap(MFGX_fake_script)()
+local function WSQRPQB_fake_script() -- Spawnspaceloop.LocalScript 
 	local script = Instance.new('LocalScript', Spawnspaceloop)
 
 	local running = false
@@ -849,8 +1048,8 @@ local function RTXTSE_fake_script() -- Spawnspaceloop.LocalScript
 		end
 	end)
 end
-coroutine.wrap(RTXTSE_fake_script)()
-local function VTDF_fake_script() -- wslight.LocalScript 
+coroutine.wrap(WSQRPQB_fake_script)()
+local function FKSIRC_fake_script() -- wslight.LocalScript 
 	local script = Instance.new('LocalScript', wslight)
 
 	local Lighting = game:GetService("Lighting")
@@ -866,8 +1065,8 @@ local function VTDF_fake_script() -- wslight.LocalScript
 		end
 	end)
 end
-coroutine.wrap(VTDF_fake_script)()
-local function OSICVJI_fake_script() -- wsgui.LocalScript 
+coroutine.wrap(FKSIRC_fake_script)()
+local function ISWC_fake_script() -- wsgui.LocalScript 
 	local script = Instance.new('LocalScript', wsgui)
 
 	local Players = game:GetService("Players")
@@ -897,8 +1096,8 @@ local function OSICVJI_fake_script() -- wsgui.LocalScript
 		end
 	end)
 end
-coroutine.wrap(OSICVJI_fake_script)()
-local function MPFCOLN_fake_script() -- wstools.LocalScript 
+coroutine.wrap(ISWC_fake_script)()
+local function ZXWZM_fake_script() -- wstools.LocalScript 
 	local script = Instance.new('LocalScript', wstools)
 
 	local Players = game:GetService("Players")
@@ -928,4 +1127,4 @@ local function MPFCOLN_fake_script() -- wstools.LocalScript
 		end
 	end)
 end
-coroutine.wrap(MPFCOLN_fake_script)()
+coroutine.wrap(ZXWZM_fake_script)()
